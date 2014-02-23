@@ -37,7 +37,7 @@ var server = _http.createServer(app);
 
 var io = _io.listen(server);
 
-function xxxxxxx(socket, redisClient, redis_err, redis_reply) {
+function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
 
   console.log('redisClient.get() - redis_err: "' + redis_err
       + '" - redis_reply: "' + redis_reply + '"');
@@ -57,6 +57,10 @@ function xxxxxxx(socket, redisClient, redis_err, redis_reply) {
     });
     return;
   }
+
+  // FIXME: should use something like 'get-and-delete'
+  console.log("Remoging retrieved key");
+  redisClient.del(redisKey);
 
   var userId = redis_reply;
 
@@ -85,9 +89,10 @@ io.of('/io/user/notifications').on('connection', function(socket) {
   socket.on('subscribe-to-notifications', function(data) {
     console.log('subscribe-to-notifications - data.uuid: "' + data.uuid);
 
+    var redisKey = 'cookie-' + data.uuid;
     var redisClient = _redis.createClient();
-    redisClient.get('cookie-' + data.uuid, function(err, reply) {
-      xxxxxxx(socket, redisClient, err, reply);
+    redisClient.get(redisKey, function(err, reply) {
+      xxxxxxx(socket, redisClient, redisKey, err, reply);
     });
   });
 
