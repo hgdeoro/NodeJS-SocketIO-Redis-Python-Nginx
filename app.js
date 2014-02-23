@@ -9,6 +9,7 @@ var _user = require('./routes/user');
 var _http = require('http');
 var _path = require('path');
 var _socketio = require('socket.io');
+var _redis = require('redis');
 
 var app = _express();
 
@@ -25,10 +26,11 @@ app.use(app.router);
 app.use(_express.static(_path.join(__dirname, 'public')));
 
 // development only
-if ('development' == app.get('env')) {
+if ('development' === app.get('env')) {
   app.use(_express.errorHandler());
 }
 
+// map urls
 app.get('/', _routes.index);
 app.get('/users', _user.list);
 
