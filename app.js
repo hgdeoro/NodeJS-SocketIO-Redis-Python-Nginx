@@ -3,34 +3,48 @@
  * Module dependencies.
  */
 
-var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var http = require('http');
-var path = require('path');
+var _express = require('express');
+var _routes = require('./routes');
+var _user = require('./routes/user');
+var _http = require('http');
+var _path = require('path');
+var _socketio = require('socket.io');
 
-var app = express();
+var app = _express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', _path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
+app.use(_express.favicon());
+app.use(_express.logger('dev'));
+app.use(_express.json());
+app.use(_express.urlencoded());
+app.use(_express.methodOverride());
 app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(_express.static(_path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+  app.use(_express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/', _routes.index);
+app.get('/users', _user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = _http.createServer(app);
+
+var io = _socketio.listen(server);
+
+io.sockets.on('connection', function(socket) {
+	socket.emit('news', {
+		hello : 'world'
+	});
+	socket.on('my other event', function(data) {
+		console.log(data);
+	});
+});
+
+server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
