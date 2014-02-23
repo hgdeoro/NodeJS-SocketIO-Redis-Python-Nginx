@@ -43,7 +43,8 @@ function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
       + '" - redis_reply: "' + redis_reply + '"');
 
   if (redis_err !== null) {
-    socket.emit('error', {
+    socket.emit('internal', {
+      type : 'error',
       code : 'USER_ID_RETRIEVAL_RETURNED_ERROR',
       message : 'Error detected when trying to get user id.'
     });
@@ -51,7 +52,8 @@ function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
   }
 
   if (redis_reply === null) {
-    socket.emit('error', {
+    socket.emit('internal', {
+      type : 'error',
       code : 'USERID_IS_NULL',
       message : 'Couldn\'t get userId.'
     });
@@ -80,6 +82,12 @@ function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
   var url = '/app/user/' + userId + '/notifications';
   console.log("Subscribing to " + url);
   redisClient.subscribe(url);
+
+  socket.emit('internal', {
+    type : 'success',
+    code : 'SUBSCRIPTION_OK',
+    message : 'Subscription to pub/sub ok.'
+  });
 
 }
 

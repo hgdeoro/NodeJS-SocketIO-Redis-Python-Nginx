@@ -24,10 +24,17 @@
         console.log(' - Message from app: ' + data.message);
       });
 
-      socket.on('error', function(data) {
-        console.log('Error report received from server: ' + data);
-        console.log(' - Code: ' + data.code);
-        console.log(' - Message: ' + data.message);
+      socket.on('internal', function(data) {
+        console.log('Internal message received from server: ' + data);
+        if (data.type === 'error') {
+          console.log('Error report received from server: ' + data);
+          console.log(' - Code: ' + data.code);
+          console.log(' - Message: ' + data.message);
+        } else if (data.type === 'success') {
+          console.log(' - Success: ' + data.message);
+        } else {
+          console.log('Unknown internal message type');
+        }
       });
 
       socket.on('connect', function() {
