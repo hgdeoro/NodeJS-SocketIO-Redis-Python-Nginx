@@ -1,1 +1,20 @@
-<html>prueba</html>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Express</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+    var socket = io.connect('http://localhost:3000');
+    socket.on('news', function (data) {
+      console.log(data);
+      socket.emit('my other event', { my: 'data' });
+    });
+  </script>
+</head>
+<body>
+
+<h1>User's notifications</h1>
+
+
+</body></html>

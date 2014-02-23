@@ -18,6 +18,7 @@ var app = _express();
 app.set('port', process.env.PORT || 3000);
 app.set('views', _path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+// app.set('view engine', 'ejs');
 app.use(_express.favicon());
 app.use(_express.logger('dev'));
 app.use(_express.json());
