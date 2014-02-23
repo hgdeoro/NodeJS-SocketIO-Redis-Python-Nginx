@@ -16,10 +16,34 @@
 	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
-    var socket = io.connect('http://localhost:3000/io/user/notifications');
-    socket.on('notification', function(data) {
-      console.log('Notification received: ' + data);
-      console.log(' - Message from app: ' + data.message);
+    $(document).ready(function() {
+      var socket = io.connect('http://localhost:3000/io/user/notifications');
+
+      socket.on('notification', function(data) {
+        console.log('Notification received: ' + data);
+        console.log(' - Message from app: ' + data.message);
+      });
+
+      socket.on('error', function(data) {
+        console.log('Error report received from server: ' + data);
+        console.log(' - Code: ' + data.code);
+        console.log(' - Message: ' + data.message);
+      });
+
+      socket.on('connect', function() {
+        console.log('Socket.IO connected');
+        // 1. Get random UUID using AJAX
+
+        // TODO!
+        var uuidCookie = 'f156dbe0-1441-47b5-b74c-004cac13af2b';
+
+        // 2. Use that UUID to subscribe to events
+        console.log('uuidCookie: ' + uuidCookie);
+        socket.emit('subscribe-to-notifications', {
+          uuid : uuidCookie
+        });
+
+      });
     });
   </script>
 </body>

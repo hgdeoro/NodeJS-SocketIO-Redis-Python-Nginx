@@ -37,23 +37,60 @@ var server = _http.createServer(app);
 
 var io = _io.listen(server);
 
-io.of('/io/user/notifications').on('connection', function(socket) {
-  console.log('Connection from ' + socket);
+function xxxxxxx(socket, redisClient, redis_err, redis_reply) {
 
-  var subscriber = _redis.createClient();
+  console.log('redisClient.get() - redis_err: "' + redis_err
+      + '" - redis_reply: "' + redis_reply + '"');
 
-  subscriber.on("error", function(err) {
+  if (redis_err !== null) {
+    socket.emit('error', {
+      code : 'USER_ID_RETRIEVAL_RETURNED_ERROR',
+      message : 'Error detected when trying to get user id.'
+    });
+    return;
+  }
+
+  if (redis_reply === null) {
+    socket.emit('error', {
+      code : 'USERID_IS_NULL',
+      message : 'Couldn\'t get userId.'
+    });
+    return;
+  }
+
+  var userId = redis_reply;
+
+  redisClient.on("error", function(err) {
     // TODO: infor this error to client (using websocket)
     // TODO: close this websocket (so the client knows and reconnect)
     console.log("Error " + err);
   });
 
-  subscriber.on('message', function(pattern, data) {
+  redisClient.on('message', function(pattern, data) {
     console.log('Suscriber received a message: ' + data);
-    socket.emit('notification', { message: data });
+    socket.emit('notification', {
+      message : data
+    });
   });
 
-  subscriber.subscribe("/app/user/123/notifications");
+  var url = '/app/user/' + userId + '/notifications';
+  console.log("Subscribing to " + url);
+  redisClient.subscribe(url);
+
+}
+
+io.of('/io/user/notifications').on('connection', function(socket) {
+  console.log('Connection from ' + socket);
+
+  socket.on('subscribe-to-notifications', function(data) {
+    console.log('subscribe-to-notifications - data.uuid: "' + data.uuid);
+
+    var redisClient = _redis.createClient();
+    redisClient.get('cookie-' + data.uuid, function(err, reply) {
+      xxxxxxx(socket, redisClient, err, reply);
+    });
+  });
+
 });
 
 server.listen(app.get('port'), function() {
