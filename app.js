@@ -8,7 +8,7 @@ var _routes = require('./routes');
 var _user = require('./routes/user');
 var _http = require('http');
 var _path = require('path');
-var _socketio = require('socket.io');
+var _io = require('socket.io');
 var _redis = require('redis');
 
 var app = _express();
@@ -36,15 +36,24 @@ app.get('/users', _user.list);
 
 var server = _http.createServer(app);
 
-var io = _socketio.listen(server);
+var io = _io.listen(server);
 
 io.sockets.on('connection', function(socket) {
-	socket.emit('news', {
-		hello : 'world'
-	});
-	socket.on('my other event', function(data) {
-		console.log(data);
-	});
+  console.log('Connection from ' + socket);
+  var subscriber = _redis.createClient();
+
+  subscriber.on("error", function(err) {
+    // TODO: infor this error to client (using websocket)
+    // TODO: close this websocket (so the client knows and reconnect)
+    console.log("Error " + err);
+  });
+
+  subscriber.on('message', function(pattern, data) {
+    console.log('Suscriber received a message: ' + data);
+    socket.send(data);
+  });
+
+  subscriber.subscribe("/app/user/123/notifications");
 });
 
 server.listen(app.get('port'), function(){
