@@ -1,11 +1,9 @@
-
 /**
  * Module dependencies.
  */
 
 var _express = require('express');
 var _routes = require('./routes');
-var _user = require('./routes/user');
 var _notifications = require('./routes/notifications');
 var _http = require('http');
 var _path = require('path');
@@ -17,8 +15,7 @@ var app = _express();
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', _path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-// app.set('view engine', 'ejs');
+app.set('view engine', 'ejs');
 app.use(_express.favicon());
 app.use(_express.logger('dev'));
 app.use(_express.json());
@@ -34,7 +31,6 @@ if ('development' === app.get('env')) {
 
 // map urls
 app.get('/', _routes.index);
-app.get('/users', _user.list);
 app.get('/notifications', _notifications.notifications);
 
 var server = _http.createServer(app);
@@ -59,6 +55,6 @@ io.sockets.on('connection', function(socket) {
   subscriber.subscribe("/app/user/123/notifications");
 });
 
-server.listen(app.get('port'), function(){
+server.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });

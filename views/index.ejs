@@ -1,0 +1,7 @@
+<!DOCTYPE html><html><head>
+<title><%= title %></title>
+<link rel="stylesheet" href="/stylesheets/style.css"><script src="/socket.io/socket.io.js"></script><script type="text/javascript">var socket = io.connect('http://localhost:3000');
+socket.on('news', function (data) {
+  console.log(data);
+  socket.emit('my other event', { my: 'data' });
+});</script></head><body><h1>Express</h1><p>Welcome to Express</p></body></html>
