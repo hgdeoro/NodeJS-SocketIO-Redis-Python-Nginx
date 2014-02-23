@@ -37,7 +37,7 @@ var server = _http.createServer(app);
 
 var io = _io.listen(server);
 
-io.sockets.on('connection', function(socket) {
+io.of('/io/user/notifications').on('connection', function(socket) {
   console.log('Connection from ' + socket);
 
   var subscriber = _redis.createClient();
