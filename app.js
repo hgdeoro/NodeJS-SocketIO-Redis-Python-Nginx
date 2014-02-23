@@ -6,6 +6,7 @@
 var _express = require('express');
 var _routes = require('./routes');
 var _user = require('./routes/user');
+var _notifications = require('./routes/notifications');
 var _http = require('http');
 var _path = require('path');
 var _io = require('socket.io');
@@ -33,6 +34,7 @@ if ('development' === app.get('env')) {
 // map urls
 app.get('/', _routes.index);
 app.get('/users', _user.list);
+app.get('/notifications', _notifications.notifications);
 
 var server = _http.createServer(app);
 
