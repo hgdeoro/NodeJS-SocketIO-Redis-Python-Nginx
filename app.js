@@ -39,6 +39,7 @@ var io = _io.listen(server);
 
 io.sockets.on('connection', function(socket) {
   console.log('Connection from ' + socket);
+
   var subscriber = _redis.createClient();
 
   subscriber.on("error", function(err) {
@@ -49,7 +50,7 @@ io.sockets.on('connection', function(socket) {
 
   subscriber.on('message', function(pattern, data) {
     console.log('Suscriber received a message: ' + data);
-    socket.send(data);
+    socket.emit('notification', { message: data });
   });
 
   subscriber.subscribe("/app/user/123/notifications");

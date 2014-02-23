@@ -1,20 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Express</title>
-  <link rel="stylesheet" href="/stylesheets/style.css">
-  <script src="/socket.io/socket.io.js"></script>
-  <script type="text/javascript">
-    var socket = io.connect('http://localhost:3000');
-    socket.on('news', function (data) {
-      console.log(data);
-      socket.emit('my other event', { my: 'data' });
-    });
-  </script>
+<meta charset="UTF-8">
+<title>Express</title>
+<link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
 
-<h1>User's notifications</h1>
+	<h1>User's notifications</h1>
 
+	<!-- ================================================== -->
+	<!-- == JavaScripts -->
+	<!-- ================================================== -->
 
-</body></html>
+	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+    var socket = io.connect('http://localhost:3000');
+    socket.on('notification', function(data) {
+      console.log('Notification received: ' + data);
+      console.log(' - Message from app: ' + data.message);
+      
+      /*
+      socket.emit('my other event', {
+        my : 'data'
+      });
+       */
+    });
+  </script>
+</body>
+</html>
