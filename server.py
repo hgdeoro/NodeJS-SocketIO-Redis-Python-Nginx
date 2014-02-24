@@ -9,6 +9,7 @@ import os
 import uuid
 
 import redis
+from redis.exceptions import ConnectionError
 
 
 PORT = 3010
@@ -43,6 +44,7 @@ def store_uuid_cookie():
                                   USER_ID,
                                   expire,
                                   nx=True)
+
     if set_result is True:
         return uuid_cookie
     else:
@@ -53,7 +55,16 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_GET(self):
         # REDIS -> SET cookie-5ebc3e41-709c-4dc7-857c-15233c96516a 12345 EX 10 NX
-        uuid_cookie = store_uuid_cookie()
+        try:
+            uuid_cookie = store_uuid_cookie()
+        except ConnectionError:
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"ok" : False,
+                                         "uuidCookie": None,
+                                         "message": "Connection to Redis failed." }))
+            return
 
         if uuid_cookie is not None:
             self.send_response(200)
