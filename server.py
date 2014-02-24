@@ -4,6 +4,7 @@
 
 import BaseHTTPServer
 import SocketServer
+import cgi
 import json
 import os
 import uuid
@@ -27,6 +28,11 @@ USER_ID = os.environ['SAMPLE_USERID']
 # If 'UUID_COOKIE' is set, return that instead a random one
 #
 UUID_COOKIE = os.environ.get('UUID_COOKIE', None)
+
+
+def send_message(user_id, message):
+    pass
+
 
 def store_uuid_cookie():
     """
@@ -81,9 +87,22 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"ok" : False,
                                          "uuidCookie": None }))
 
+    def do_POST(self):
+        # message-text
+        length = int(self.headers.getheader('content-length'))
+        postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
+        message = postvars['message-text']
 
+        print message
+
+        self.send_response(200)
+        self.send_header("Content-type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "http://localhost:3000")
+        self.end_headers()
+        self.wfile.write(json.dumps({"ok" : True}))
+
+SocketServer.TCPServer.allow_reuse_address = True
 httpd = SocketServer.TCPServer(("", PORT), Handler)
-httpd.allow_reuse_address = True
 
 print "serving at port", PORT
 httpd.serve_forever()

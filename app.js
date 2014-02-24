@@ -30,6 +30,18 @@ if ('development' === app.get('env')) {
   app.use(_express.errorHandler());
 }
 
+// app.configure(function() {
+// app.use(function(req, res, next) {
+// res.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:3010/python");
+// return next();
+// });
+// // app.use(express.static(path.join(application_root, "StaticPages")));
+// // app.use(express.errorHandler({
+// // dumpExceptions : true,
+// // showStack : true
+// // }));
+// });
+
 var server = _http.createServer(app);
 var io = _io.listen(server);
 var proxy = _httpProxy.createProxyServer();
@@ -54,6 +66,7 @@ function pythonProxy(req, res) {
 app.get('/', _routes.index);
 app.get('/notifications', _notifications.notifications);
 app.get('/python', pythonProxy);
+// app.post('/python', pythonProxy);
 
 //
 // Subscribe to the Redis to receive notifications, and re-send it to the client

@@ -15,6 +15,13 @@
 <body>
 	<div class="container">
 
+		<form action="" method="post" id="form">
+			<textarea class="form-control" rows="3" name="message-text"
+				id="message-text"></textarea>
+			<input type="submit" id="send-button" class="btn btn-primary"
+				value="Send">
+		</form>
+
 		<h1>User's notifications</h1>
 		<div id="messages"></div>
 
@@ -80,32 +87,50 @@
       newMsg.appendTo('#messages');
     }
 
-    $(document).ready(function() {
-      var socket = io.connect('http://localhost:3000/io/user/notifications');
+    $(document).ready(
+        function() {
+          $("#form").submit(
+              function(event) {
+                event.preventDefault();
+                var posting = $.post("http://127.0.0.1:3010/python", $("#form")
+                    .serialize());
+                posting.done(function(data) {
+                  $('#message-text').val('');
+                });
+              });
 
-      socket.on('notification', function(data) {
-        console.log('Notification received: ' + data);
-        console.log(' - Message from app: ' + data.message);
-        addMessage(data.message);
-      });
+          /*
+          $("#send-button").click(function {
+            $.post( "/python", $( "#form" ).serialize() );
+          });
+           */
 
-      socket.on('internal', function(data) {
-        console.log('Internal message received from server: ' + data);
-        if (data.type === 'error') {
-          addLog('ERROR: couldn\'t subscribe to notifications');
-          console.log('Error report received from server: ' + data);
-          console.log(' - Code: ' + data.code);
-          console.log(' - Message: ' + data.message);
-        } else if (data.type === 'success') {
-          addLog('Subscription to notifications OK');
-          console.log(' - Success: ' + data.message);
-        } else {
-          console.log('Unknown internal message type');
-        }
-      });
+          var socket = io
+              .connect('http://localhost:3000/io/user/notifications');
 
-      socket.on('connect', retrieveUuidCookie(socket));
-    });
+          socket.on('notification', function(data) {
+            console.log('Notification received: ' + data);
+            console.log(' - Message from app: ' + data.message);
+            addMessage(data.message);
+          });
+
+          socket.on('internal', function(data) {
+            console.log('Internal message received from server: ' + data);
+            if (data.type === 'error') {
+              addLog('ERROR: couldn\'t subscribe to notifications');
+              console.log('Error report received from server: ' + data);
+              console.log(' - Code: ' + data.code);
+              console.log(' - Message: ' + data.message);
+            } else if (data.type === 'success') {
+              addLog('Subscription to notifications OK');
+              console.log(' - Success: ' + data.message);
+            } else {
+              console.log('Unknown internal message type');
+            }
+          });
+
+          socket.on('connect', retrieveUuidCookie(socket));
+        });
   </script>
 </body>
 </html>
