@@ -16,6 +16,39 @@
 	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
+    //
+    // Retrieves the uuidCookie using Ajax
+    //
+    var retrieveUuidCookie = function(socket) {
+      return function() {
+        console.log('Socket.IO connected');
+
+        $
+            .ajax({
+              type : "GET",
+              url : "/python",
+            })
+            .done(
+                function(msg) {
+                  if (msg.ok === true) {
+                    console.log("UUID-Cookie received from server using AJAX: "
+                        + msg.uuidCookie);
+
+                    // 2. Use that UUID to subscribe to events
+                    console.log('uuidCookie: ' + msg.uuidCookie);
+                    socket.emit('subscribe-to-notifications', {
+                      uuid : msg.uuidCookie
+                    });
+
+                  } else {
+                    console
+                        .log("Error: the server didn't provide a valid UUID-Cookie");
+                  }
+                });
+
+      }
+    };
+
     $(document).ready(function() {
       var socket = io.connect('http://localhost:3000/io/user/notifications');
 
@@ -37,28 +70,7 @@
         }
       });
 
-      socket.on('connect', function() {
-        console.log('Socket.IO connected');
-
-        $.ajax({
-          type : "GET",
-          url : "/python",
-        }).done(function(msg) {
-          console.log("UUID-Cookie received from server using AJAX: " + msg.uuidCookie);
-        });
-
-        // 1. Get random UUID using AJAX
-
-        // TODO!
-        var uuidCookie = 'f156dbe0-1441-47b5-b74c-004cac13af2b';
-
-        // 2. Use that UUID to subscribe to events
-        console.log('uuidCookie: ' + uuidCookie);
-        socket.emit('subscribe-to-notifications', {
-          uuid : uuidCookie
-        });
-
-      });
+      socket.on('connect', retrieveUuidCookie(socket));
     });
   </script>
 </body>
