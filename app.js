@@ -62,9 +62,15 @@ function pythonProxy(req, res) {
   });
 }
 
+function redirectToIo(req, res) {
+  res.redirect('/io');
+  res.end();
+};
+
 // Map urls
-app.get('/', _routes.index);
-app.get('/notifications', _notifications.notifications);
+app.get('/', redirectToIo);
+app.get('/io', _routes.index);
+app.get('/io/notifications', _notifications.notifications);
 app.get('/python', pythonProxy);
 // app.post('/python', pythonProxy);
 
