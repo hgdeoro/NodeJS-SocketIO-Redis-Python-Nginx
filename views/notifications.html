@@ -35,6 +35,7 @@
     //
     var retrieveUuidCookie = function(socket) {
       return function() {
+        addLog('Socket.IO connected');
         console.log('Socket.IO connected');
 
         $
@@ -50,11 +51,13 @@
 
                     // 2. Use that UUID to subscribe to events
                     console.log('uuidCookie: ' + msg.uuidCookie);
+                    addLog('Trying to subscribe to notifications');
                     socket.emit('subscribe-to-notifications', {
                       uuid : msg.uuidCookie
                     });
 
                   } else {
+                    addLog('ERROR: couldn\'t subscribe to notifications');
                     console
                         .log("Error: the server didn't provide a valid UUID-Cookie");
                   }
@@ -63,22 +66,38 @@
       }
     };
 
+    var addLog = function(msg) {
+      var newMsg = $('<div/>');
+      newMsg.addClass("alert alert-info");
+      newMsg.text('[LOG] ' + msg);
+      newMsg.appendTo('#messages');
+    }
+
+    var addMessage = function(msg) {
+      var newMsg = $('<div/>');
+      newMsg.addClass("alert alert-success");
+      newMsg.text('[NOTIFICATION] ' + msg);
+      newMsg.appendTo('#messages');
+    }
+
     $(document).ready(function() {
       var socket = io.connect('http://localhost:3000/io/user/notifications');
 
       socket.on('notification', function(data) {
         console.log('Notification received: ' + data);
         console.log(' - Message from app: ' + data.message);
-        $('#messages').append('<div class="alert alert-info">' + data.message + '</div>');
+        addMessage(data.message);
       });
 
       socket.on('internal', function(data) {
         console.log('Internal message received from server: ' + data);
         if (data.type === 'error') {
+          addLog('ERROR: couldn\'t subscribe to notifications');
           console.log('Error report received from server: ' + data);
           console.log(' - Code: ' + data.code);
           console.log(' - Message: ' + data.message);
         } else if (data.type === 'success') {
+          addLog('Subscription to notifications OK');
           console.log(' - Success: ' + data.message);
         } else {
           console.log('Unknown internal message type');
