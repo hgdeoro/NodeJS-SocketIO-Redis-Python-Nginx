@@ -1,7 +1,17 @@
-<!DOCTYPE html><html><head>
+<!DOCTYPE html>
+<html>
+<head>
 <title><%= title %></title>
-<link rel="stylesheet" href="/stylesheets/style.css"><script src="/socket.io/socket.io.js"></script><script type="text/javascript">var socket = io.connect('http://localhost:3000');
-socket.on('news', function (data) {
-  console.log(data);
-  socket.emit('my other event', { my: 'data' });
-});</script></head><body><h1>Express</h1><p>Welcome to Express</p></body></html>
+<link rel="stylesheet" href="/stylesheets/style.css">
+<script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+	<h1>Node.JS + Socket.IO + Redis + Python</h1>
+	<p>
+	 <ul>
+     <li><a href="/python">Python (proxied by Node.JS)</a></li>
+     <li><a href="/notifications">Notifications</a></li>
+	 </ul>
+	</p>
+</body>
+</html>
