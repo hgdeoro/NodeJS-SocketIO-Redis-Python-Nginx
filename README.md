@@ -1,13 +1,11 @@
+# NodeJS-SocketIO-Redis-Python-Nginx
 
-# NodeJS-SocketIO-Redis-Python
+Simple Node.JS + Socket.IO application integrated to Python using Redis and published using Nginx. Python isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
 
-Sample Node.JS + Socket.IO application integrated to Python using Redis.
+This **IS NOT** a "public chat" example. Each user get it's own notifications.
 
 ![Overview](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/NodeJS-SocketIO-Redis-Python-Nginx.png)
 
-
-The intended integration was to send asynchronous notifications to the browser
-from events generated from Python/Django.
 
 ## Overview
 
@@ -48,14 +46,15 @@ Go to: [http://localhost:3000/io/](http://localhost:3000/io/)
 
 ## TODO
 
-* add instructios to use with/without Nginx
-* add diagrams
-* add requirements.txt for python libraries
-* add Django and uWSGI
+- [ ] add instructios to use with/without Nginx
+- [x] ~~add diagrams~~
+- [ ] add requirements.txt for python libraries
+- [ ] add Django and uWSGI
+- [ ] document used ports and how to launch nodejs / python server
+- [ ] explain what uuidCookie is
+
 
 ### Tools
 
 Created with [Nodeclipse](https://github.com/Nodeclipse/nodeclipse-1)
- ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org))   
-
-Nodeclipse is free open-source project that grows with your contributions.
+ ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org)) - Nodeclipse is free open-source project that grows with your contributions.
