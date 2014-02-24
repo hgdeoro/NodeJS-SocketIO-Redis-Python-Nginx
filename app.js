@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 Horacio G. de Oro - hgdeoro@gmail.com
+ * MIT License - See LICENSE.txt
+ */
+
 /**
  * Module dependencies.
  */

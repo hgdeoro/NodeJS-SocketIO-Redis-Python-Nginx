@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Copyright (c) 2014 Horacio G. de Oro - hgdeoro@gmail.com
+MIT License - See LICENSE.txt
+"""
+
 #
 # https://wiki.python.org/moin/BaseHttpServer
 #
