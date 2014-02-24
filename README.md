@@ -1,8 +1,10 @@
 
-
 # NodeJS-SocketIO-Redis-Python
 
 Sample Node.JS + Socket.IO application integrated to Python using Redis.
+
+![Overview](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/NodeJS-SocketIO-Redis-Python-Nginx.png)
+
 
 The intended integration was to send asynchronous notifications to the browser
 from events generated from Python/Django.
