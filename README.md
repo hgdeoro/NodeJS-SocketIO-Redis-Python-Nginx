@@ -22,6 +22,34 @@ There are 4 servers:
   * used to share a 'cookie' between Python and Node.JS, to seurely identify the user from NodeJS
   * used to implement publisher/subscriber... Any message published to Redis will be sent to the user using Socket.IO
 
+## Requires
+
+* Redis server
+* Node.JS
+* Python + python redis client
+
+## How to use
+
+Start Redis
+
+    $ sudo service redis start
+
+Start Node.JS
+
+    $ env NGINX=true node app.js
+
+Start Python server
+
+    $ env SAMPLE_USERID=5654 python server.py
+
+Go to: [http://localhost:3000/io/](http://localhost:3000/io/)
+
+## TODO
+
+* add instructios to use with/without Nginx
+* add diagrams
+* add requirements.txt for python libraries
+* add Django and uWSGI
 
 ### Tools
 

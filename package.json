@@ -1,5 +1,5 @@
 {
-  "name": "first-nodejs-express-project",
+  "name": "nodejs-socketio-redis-python-nginx",
   "version": "0.0.1",
   "private": true,
   "scripts": {
