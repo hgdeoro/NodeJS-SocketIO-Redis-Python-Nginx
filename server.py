@@ -31,7 +31,8 @@ UUID_COOKIE = os.environ.get('UUID_COOKIE', None)
 
 
 def send_message(user_id, message):
-    pass
+    url = "/app/user/{0}/notifications".format(user_id)
+    redis_server.publish(url, message)
 
 
 def store_uuid_cookie():
@@ -91,9 +92,9 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
         # message-text
         length = int(self.headers.getheader('content-length'))
         postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
-        message = postvars['message-text']
+        message = postvars['message-text'][0]
 
-        print message
+        send_message(USER_ID, message)
 
         self.send_response(200)
         self.send_header("Content-type", "application/json")
