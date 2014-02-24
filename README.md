@@ -14,7 +14,6 @@ There are 4 servers:
 * Nginx
   * to expose all the software within a single URL (avoid Access-Control-Allow-Origin problems)
   * support web sockets :-D
-  * NOT used here yet, but SHOULD be used to put something like this in production
 * Python
   * The main web server / application server
 * Node.JS + Socket.IO
@@ -22,9 +21,6 @@ There are 4 servers:
 * Redis
   * used to share a 'cookie' between Python and Node.JS, to seurely identify the user from NodeJS
   * used to implement publisher/subscriber... Any message published to Redis will be sent to the user using Socket.IO
-
-
-
 
 
 ### Tools

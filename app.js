@@ -46,7 +46,11 @@ var server = _http.createServer(app);
 var io = _io.listen(server);
 var proxy = _httpProxy.createProxyServer();
 
-// Function to proxy requests to Python http server
+//
+// Proxy requests to Python http server
+// This is required to avoid setting up Nginx
+// If you use Nginx, you should remove/comment this
+//
 function pythonProxy(req, res) {
   console.log("Proxying request...");
   proxy.web(req, res, {
@@ -65,7 +69,7 @@ function pythonProxy(req, res) {
 function redirectToIo(req, res) {
   res.redirect('/io');
   res.end();
-};
+}
 
 // Map urls
 app.get('/', redirectToIo);
