@@ -34,6 +34,7 @@ var server = _http.createServer(app);
 var io = _io.listen(server);
 var proxy = _httpProxy.createProxyServer();
 
+// Function to proxy requests to Python http server
 function pythonProxy(req, res) {
   console.log("Proxying request...");
   proxy.web(req, res, {
@@ -49,16 +50,22 @@ function pythonProxy(req, res) {
   });
 }
 
-// map urls
+// Map urls
 app.get('/', _routes.index);
 app.get('/notifications', _notifications.notifications);
 app.get('/python', pythonProxy);
 
-function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
+//
+// Subscribe to the Redis to receive notifications, and re-send it to the client
+// using Socket.IO
+//
+function subscribeUserToNotifications(socket, redisClient, redisKey, redis_err,
+    redis_reply) {
 
   console.log('redisClient.get() - redis_err: "' + redis_err
       + '" - redis_reply: "' + redis_reply + '"');
 
+  // Check if response from Redis is valid
   if (redis_err !== null) {
     socket.emit('internal', {
       type : 'error',
@@ -68,6 +75,7 @@ function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
     return;
   }
 
+  // Check if response from Redis is valid
   if (redis_reply === null) {
     socket.emit('internal', {
       type : 'error',
@@ -77,29 +85,43 @@ function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
     return;
   }
 
-  // FIXME: should use something like 'get-and-delete'
-  console.log("Remoging retrieved key");
+  // FIXME: should use something like 'get-and-delete' if exists
+  // FIXME: is this realy neccesary? The key expires quickly, so,
+  // maybe this isn't required
+  console.log("Removing retrieved key from Redis");
   redisClient.del(redisKey);
 
   var userId = redis_reply;
 
+  //
+  // Hanlde Redis errors
+  //
   redisClient.on("error", function(err) {
     // TODO: infor this error to client (using websocket)
     // TODO: close this websocket (so the client knows and reconnect)
     console.log("Error " + err);
   });
 
+  //
+  // Handle messages received from Redis
+  //
   redisClient.on('message', function(pattern, data) {
     console.log('Suscriber received a message: ' + data);
+
+    // Re-send message to the browser using Socket.IO
     socket.emit('notification', {
       message : data
     });
   });
 
+  //
+  // Subscribe to URL of notifications for the user
+  //
   var url = '/app/user/' + userId + '/notifications';
   console.log("Subscribing to " + url);
   redisClient.subscribe(url);
 
+  // Inform client the subscription was done
   socket.emit('internal', {
     type : 'success',
     code : 'SUBSCRIPTION_OK',
@@ -107,6 +129,10 @@ function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
   });
 
 }
+
+//
+// Attache '/io/user/notifications' to SocketIO
+//
 
 io.of('/io/user/notifications').on('connection', function(socket) {
   console.log('Connection from ' + socket);
@@ -117,7 +143,7 @@ io.of('/io/user/notifications').on('connection', function(socket) {
     var redisKey = 'cookie-' + data.uuid;
     var redisClient = _redis.createClient();
     redisClient.get(redisKey, function(err, reply) {
-      xxxxxxx(socket, redisClient, redisKey, err, reply);
+      subscribeUserToNotifications(socket, redisClient, redisKey, err, reply);
     });
   });
 
