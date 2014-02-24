@@ -1,14 +1,29 @@
 
 
-# first-nodejs-express-project
+# NodeJS-SocketIO-Redis-Python
+
+Sample Node.JS + Socket.IO application integrated to Python using Redis.
+
+The intended integration was to send asynchronous notifications to the browser
+from events generated from Python/Django.
+
+## Overview
+
+There are 4 servers:
+
+* Nginx
+  * to expose all the software within a single URL (avoid Access-Control-Allow-Origin problems)
+  * support web sockets :-D
+  * NOT used here yet, but SHOULD be used to put something like this in production
+* Python
+  * The main web server / application server
+* Node.JS + Socket.IO
+  * To subscribe to a Redis pub/sub, and send received messages using Socket.IO
+* Redis
+  * used to share a 'cookie' between Python and Node.JS, to seurely identify the user from NodeJS
+  * used to implement publisher/subscriber... Any message published to Redis will be sent to the user using Socket.IO
 
 
-
-## Usage
-
-
-
-## Developing
 
 
 
