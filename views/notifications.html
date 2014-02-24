@@ -39,6 +39,14 @@
 
       socket.on('connect', function() {
         console.log('Socket.IO connected');
+
+        $.ajax({
+          type : "GET",
+          url : "/python",
+        }).done(function(msg) {
+          console.log("UUID-Cookie received from server using AJAX: " + msg);
+        });
+
         // 1. Get random UUID using AJAX
 
         // TODO!
