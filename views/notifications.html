@@ -1,20 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Express</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node.JS + Socket.IO + Redis + Python</title>
 <link rel="stylesheet" href="/stylesheets/style.css">
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
 </head>
 <body>
+	<div class="container">
 
-	<h1>User's notifications</h1>
-	<div id="messages"></div>
+		<h1>User's notifications</h1>
+		<div id="messages"></div>
+
+	</div>
+	<!-- /container -->
 
 	<!-- ================================================== -->
 	<!-- == JavaScripts -->
 	<!-- ================================================== -->
 
 	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script
+		src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<script type="text/javascript">
     //
@@ -56,7 +69,7 @@
       socket.on('notification', function(data) {
         console.log('Notification received: ' + data);
         console.log(' - Message from app: ' + data.message);
-        $('#messages').append('<p>' + data.message + '</p>');
+        $('#messages').append('<div class="alert alert-info">' + data.message + '</div>');
       });
 
       socket.on('internal', function(data) {
