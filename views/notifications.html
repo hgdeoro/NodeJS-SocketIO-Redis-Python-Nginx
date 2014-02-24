@@ -106,7 +106,7 @@
            */
 
           var socket = io
-              .connect('http://localhost:3000/io/user/notifications');
+              .connect('/io/user/notifications');
 
           socket.on('notification', function(data) {
             console.log('Notification received: ' + data);
