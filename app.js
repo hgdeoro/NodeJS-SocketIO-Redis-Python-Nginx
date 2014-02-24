@@ -9,6 +9,7 @@ var _http = require('http');
 var _path = require('path');
 var _io = require('socket.io');
 var _redis = require('redis');
+var _httpProxy = require('http-proxy');
 
 var app = _express();
 
@@ -29,13 +30,29 @@ if ('development' === app.get('env')) {
   app.use(_express.errorHandler());
 }
 
+var server = _http.createServer(app);
+var io = _io.listen(server);
+var proxy = _httpProxy.createProxyServer();
+
+function pythonProxy(req, res) {
+  console.log("Proxying request...");
+  proxy.web(req, res, {
+    target : 'http://localhost:3010'
+  }, function(e) {
+    console.log("err: " + e);
+    var respondeBody = 'ERROR: ' + e;
+    res.writeHead(200, {
+      'Content-Length' : respondeBody.length,
+      'Content-Type' : 'text/plain'
+    });
+    res.end(respondeBody);
+  });
+}
+
 // map urls
 app.get('/', _routes.index);
 app.get('/notifications', _notifications.notifications);
-
-var server = _http.createServer(app);
-
-var io = _io.listen(server);
+app.get('/python', pythonProxy);
 
 function xxxxxxx(socket, redisClient, redisKey, redis_err, redis_reply) {
 
