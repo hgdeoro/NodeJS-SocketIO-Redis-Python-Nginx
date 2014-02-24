@@ -14,6 +14,7 @@ var _httpProxy = require('http-proxy');
 var app = _express();
 
 // all environments
+app.set('nginx', process.env.NGINX || 'false');
 app.set('port', process.env.PORT || 3000);
 app.set('views', _path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -44,27 +45,6 @@ if ('development' === app.get('env')) {
 
 var server = _http.createServer(app);
 var io = _io.listen(server);
-var proxy = _httpProxy.createProxyServer();
-
-//
-// Proxy requests to Python http server
-// This is required to avoid setting up Nginx
-// If you use Nginx, you should remove/comment this
-//
-function pythonProxy(req, res) {
-  console.log("Proxying request...");
-  proxy.web(req, res, {
-    target : 'http://localhost:3010'
-  }, function(e) {
-    console.log("err: " + e);
-    var respondeBody = 'ERROR: ' + e;
-    res.writeHead(200, {
-      'Content-Length' : respondeBody.length,
-      'Content-Type' : 'text/plain'
-    });
-    res.end(respondeBody);
-  });
-}
 
 function redirectToIo(req, res) {
   res.redirect('/io');
@@ -75,8 +55,38 @@ function redirectToIo(req, res) {
 app.get('/', redirectToIo);
 app.get('/io', _routes.index);
 app.get('/io/notifications', _notifications.notifications);
-app.get('/python', pythonProxy);
-// app.post('/python', pythonProxy);
+
+if (app.get('nginx') === 'false') {
+  console.log("Not using Nginx... Will proxy /python");
+
+  var proxy = _httpProxy.createProxyServer();
+
+  //
+  // Proxy requests to Python http server
+  // This is required to avoid setting up Nginx
+  // If you use Nginx, you should remove/comment this
+  //
+  var pythonProxy = function(req, res) {
+    console.log("Proxying request...");
+    proxy.web(req, res, {
+      target : 'http://localhost:3010'
+    }, function(e) {
+      console.log("err: " + e);
+      var respondeBody = 'ERROR: ' + e;
+      res.writeHead(200, {
+        'Content-Length' : respondeBody.length,
+        'Content-Type' : 'text/plain'
+      });
+      res.end(respondeBody);
+    });
+  };
+
+  app.get('/python', pythonProxy);
+
+} else {
+  console.log("Using Nginx... Won't proxy /python");
+
+}
 
 //
 // Subscribe to the Redis to receive notifications, and re-send it to the client
