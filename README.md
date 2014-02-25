@@ -62,15 +62,23 @@ Start Python server
 
 Go to: [http://localhost:3333/io](http://localhost:3333/io)
 
+
+## Used ports
+
+* Nginx: 3333
+* Node.JS: 3000
+* Python: 3010
+
 ## TODO
 
-+ [ ] make work proxying of POSTs (to avoid Access-Control-Allow-Origin problems)
-+ [X] add instructios to use with/without Nginx
-+ [X] ~~add diagrams~~
-+ [X] ~~add requirements.txt for python libraries~~
-+ [ ] add Django and uWSGI
-+ [ ] document used ports and how to launch nodejs / python server
-+ [ ] explain what uuidCookie is
+* [X] ~~add instructios to use with/without Nginx~~
+* [X] ~~add diagrams~~
+* [X] ~~add requirements.txt for python libraries~~
+* [X] ~~document used ports and how to launch nodejs / python server~~
+* [ ] add Django and uWSGI (this will take some this... I'm working on it on the 'django' branch)
+* [ ] explain what uuidCookie is
+* [ ] make work proxying of POSTs on Node.JS (to avoid Access-Control-Allow-Origin problems).
+  * This is requiered only when NOT using Nginx
 
 
 ## Sequence diagram
