@@ -34,15 +34,25 @@ There are 4 servers:
 
 ## How to use
 
-Start Nginx
+Clone this repo and install Node.JS and Python libraries
 
+    $ git clone https://github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx.git
+    $ cd NodeJS-SocketIO-Redis-Python-Nginx
+    $ npm install
+    $ virtualenv --no-site-packages virtualenv
+    $ . virtualenv/bin/activate
+    $ pip install -r requirements.txt
+
+Setup Nginx and start it
+
+    $ sudo cp sudo cp nginx.conf /etc/nginx/sites-enabled/NodeJS-SocketIO-Redis-Python.conf
     $ sudo service nginx start
 
 Start Redis
 
-    $ sudo service redis start
+    $ sudo service redis-server start
 
-Start Node.JS
+Start the Node.JS app
 
     $ env NGINX=true node app.js
 
@@ -50,17 +60,17 @@ Start Python server
 
     $ env SAMPLE_USERID=5654 python server.py
 
-Go to: [http://localhost:3000/io/](http://localhost:3000/io/)
+Go to: [http://localhost:3333/io](http://localhost:3333/io)
 
 ## TODO
 
-- [ ] make work proxying of POSTs (to avoid Access-Control-Allow-Origin problems)
-- [ ] add instructios to use with/without Nginx
-- [x] ~~add diagrams~~
-- [x] ~~add requirements.txt for python libraries~~
-- [ ] add Django and uWSGI
-- [ ] document used ports and how to launch nodejs / python server
-- [ ] explain what uuidCookie is
++ [ ] make work proxying of POSTs (to avoid Access-Control-Allow-Origin problems)
++ [X] add instructios to use with/without Nginx
++ [X] ~~add diagrams~~
++ [X] ~~add requirements.txt for python libraries~~
++ [ ] add Django and uWSGI
++ [ ] document used ports and how to launch nodejs / python server
++ [ ] explain what uuidCookie is
 
 
 ## Sequence diagram
