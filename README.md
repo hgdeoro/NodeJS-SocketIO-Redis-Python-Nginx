@@ -16,6 +16,8 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 * **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
 
 
+**This branch contains a Django application. This is not finished yet**
+
 ![Overview](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/NodeJS-SocketIO-Redis-Python-Nginx.png)
 
 
