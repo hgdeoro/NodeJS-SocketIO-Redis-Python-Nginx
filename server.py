@@ -4,6 +4,19 @@ Copyright (c) 2014 Horacio G. de Oro - hgdeoro@gmail.com
 MIT License - See LICENSE.txt
 """
 
+"""
+This emulates the "original" application.
+
+Implements a GET and a POST.
+
+The GET is exposed to generate the uuidCookie. Node.JS does a GET
+to get the uuidCookie. In a real application, we would use the
+userId of the logged in user instead of the constant 'USER_ID'.
+
+The POST is exposed to emulate when the "original" app generates
+events.
+"""
+
 #
 # https://wiki.python.org/moin/BaseHttpServer
 #

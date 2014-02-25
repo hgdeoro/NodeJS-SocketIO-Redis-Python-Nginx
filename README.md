@@ -46,6 +46,7 @@ Go to: [http://localhost:3000/io/](http://localhost:3000/io/)
 
 ## TODO
 
+- [ ] make work proxying of POSTs (to avoid Access-Control-Allow-Origin problems)
 - [ ] add instructios to use with/without Nginx
 - [x] ~~add diagrams~~
 - [ ] add requirements.txt for python libraries
