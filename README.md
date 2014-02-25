@@ -49,7 +49,7 @@ Go to: [http://localhost:3000/io/](http://localhost:3000/io/)
 - [ ] make work proxying of POSTs (to avoid Access-Control-Allow-Origin problems)
 - [ ] add instructios to use with/without Nginx
 - [x] ~~add diagrams~~
-- [ ] add requirements.txt for python libraries
+- [x] ~~add requirements.txt for python libraries~~
 - [ ] add Django and uWSGI
 - [ ] document used ports and how to launch nodejs / python server
 - [ ] explain what uuidCookie is
