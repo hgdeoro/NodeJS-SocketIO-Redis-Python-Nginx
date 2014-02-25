@@ -13,22 +13,30 @@ There are 4 servers:
 
 * Nginx
   * to expose all the software within a single URL (avoid Access-Control-Allow-Origin problems)
-  * support web sockets :-D
+  * support websockets :-D
 * Python
   * The main web server / application server
+  * See [server.py](server.py)
 * Node.JS + Socket.IO
-  * To subscribe to a Redis pub/sub, and send received messages using Socket.IO
+  * Subscribe to a Redis channel and send received messages to the browser using Socket.IO
+  * Each user of the "original" application got a differetn channel
+  * See [app.js](app.js)
 * Redis
-  * used to share a 'cookie' between Python and Node.JS, to seurely identify the user from NodeJS
+  * used to share a 'cookie' between Python and Node.JS, to securely identify the user from NodeJS
   * used to implement publisher/subscriber... Any message published to Redis will be sent to the user using Socket.IO
 
-## Requires
+## Uses
 
 * Redis server
-* Node.JS
+* Nginx server
+* Node.JS + Express + Socket.IO + radis client
 * Python + python redis client
 
 ## How to use
+
+Start Nginx
+
+    $ sudo service nginx start
 
 Start Redis
 
