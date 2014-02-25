@@ -63,6 +63,10 @@ Go to: [http://localhost:3000/io/](http://localhost:3000/io/)
 - [ ] explain what uuidCookie is
 
 
+## Sequence diagram
+
+![Sequence diagram](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/sequence-diagram.png)
+
 ### Tools
 
 Created with [Nodeclipse](https://github.com/Nodeclipse/nodeclipse-1)
