@@ -84,13 +84,13 @@ to the same user (other browser or tabs SHOULD NOT receive the text).
 To send a message from the command line, run `redis-cli`, and publish a message
 to some of the users' channels (use the channel name from the log message above):
 
-PUBLISH /app/user/976264/notifications "Hey"
+    PUBLISH /app/user/976264/notifications "Hey"
 
 If you want the Python server returning the same user id (for example, 12345), you must start the server with:
 
     $ env SAMPLE_USERID=12345 python server.py
 
-In this case, opening multiple tabs and publishing a message to the Redis channel named '/app/user/12345/notifications'
+In this case, opening multiple tabs and publishing a message to the Redis channel named **/app/user/12345/notifications**
 will send the message to all the browsers / tabs.
 
 
