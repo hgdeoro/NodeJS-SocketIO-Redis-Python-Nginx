@@ -1,5 +1,7 @@
 # NodeJS-SocketIO-Redis-Python-Nginx
 
+**DISCLAIMER: this branch will contain a Django application. This is not finished yet, and this branch may be rebased**
+
 Simple *Node.JS* + *Socket.IO* application integrated to *Python* using *Redis* and published to the web using *Nginx*.
 Python isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
 
@@ -16,7 +18,6 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 * **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
 
 
-**This branch contains a Django application. This is not finished yet**
 
 ![Overview](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/NodeJS-SocketIO-Redis-Python-Nginx.png)
 
