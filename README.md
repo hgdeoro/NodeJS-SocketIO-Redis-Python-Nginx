@@ -1,13 +1,25 @@
 # NodeJS-SocketIO-Redis-Python-Nginx
 
-Simple Node.JS + Socket.IO application integrated to Python using Redis and published using Nginx. Python isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
+Simple *Node.JS* + *Socket.IO* application integrated to *Python* using *Redis* and published to the web using *Nginx*.
+Python isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
 
-This **IS NOT** a "public chat" example. Each user get it's own notifications.
+This **IS NOT** a *public chat* nor *message broadcast* example. Each user get it's own notifications.
+
+### Overview
+
+* the **Python** server emulates a web application. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), and knows the *userId* (the `request.user.id` in Django). To share the *userId* with Node.JS, a random UUID is generated (called uuidCookie), and is stored in Redis for 5 seconds.
+
+* the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from Redis to Socket.IO. Node.JS receives the *uuidCookie* from the browser, and retrieves the *userId* from Redis. The *userId* is used to generate the Redis channel name (for example: '/app/user/<USER_ID>/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using Socket.IO.
+
+* the **browser** uses Ajax to retrieve the *uuidCookie* from the web application (Python), and send this *uuidCookie* to *Node.JS* to start receiving notifications for the logged in user. Since the browsers and Ajax calls communicates with *Nginx*, all this happens in the same domain, avoiding a lot of problems.
+
+* **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
+
 
 ![Overview](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/NodeJS-SocketIO-Redis-Python-Nginx.png)
 
 
-## Overview
+## Servers
 
 There are 4 servers:
 
