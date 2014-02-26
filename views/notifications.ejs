@@ -98,14 +98,7 @@
 
     $(document).ready(function() {
 
-      var nginx = <%= nginx %>;
-
-      var postUrl;
-      if (nginx) {
-        postUrl = '/python';
-      } else {
-        postUrl = 'http://127.0.0.1:3010/python';
-      }
+      var postUrl = '/python';
 
       $("#form").submit(function(event) {
         event.preventDefault();
@@ -142,5 +135,4 @@
     });
   </script>
 </body>
-<!-- nginx: <%= nginx %> -->
 </html>

@@ -14,7 +14,6 @@ var _http = require('http');
 var _path = require('path');
 var _io = require('socket.io');
 var _redis = require('redis');
-var _httpProxy = require('http-proxy');
 
 /*
  * Setup Express
@@ -23,7 +22,6 @@ var _httpProxy = require('http-proxy');
 var app = _express();
 
 // all environments
-app.set('nginx', process.env.NGINX || 'false');
 app.set('port', process.env.PORT || 3000);
 app.set('views', _path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -57,48 +55,6 @@ app.get('/', function(req, res) {
 });
 app.get('/io', _routes.index);
 app.get('/io/notifications', _notifications.notifications);
-
-//
-// If not using Nginx, we need to proxy the GETs done to /python to the python
-// server on port 3010.
-//
-// The app. at /python is the "original" application, the application that can't
-// handle Socket.IO. That application knows the logged in user, and is in charge
-// of generating the notifications.
-//
-
-if (app.get('nginx') === 'false') {
-  console.log("Not using Nginx... Will proxy /python");
-
-  var proxy = _httpProxy.createProxyServer();
-
-  //
-  // Proxy requests to Python http server
-  // This is required to avoid setting up Nginx
-  //
-  var pythonProxy = function(req, res) {
-    console.log("Proxying request...");
-    proxy.web(req, res, {
-      target : 'http://localhost:3010'
-    }, function(e) {
-      console.log("err: " + e);
-      var respondeBody = 'ERROR: ' + e;
-      res.writeHead(200, {
-        'Content-Length' : respondeBody.length,
-        'Content-Type' : 'text/plain'
-      });
-      res.end(respondeBody);
-    });
-  };
-
-  app.get('/python', pythonProxy);
-
-  // FIXME: proxy POSTs
-
-} else {
-  console.log("Using Nginx... Won't proxy /python");
-
-}
 
 //
 // Subscribe to the Redis to receive notifications, and re-send it to the client

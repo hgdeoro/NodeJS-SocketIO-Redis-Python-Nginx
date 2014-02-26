@@ -32,7 +32,6 @@ There are 4 servers:
   * See [server.py](server.py)
 * Node.JS + Socket.IO
   * Subscribe to a Redis channel and send received messages to the browser using Socket.IO
-  * Each user of the "original" application got a differetn channel
   * See [app.js](app.js)
 * Redis
   * used to share the `uuidiCooki` between Python and Node.JS
@@ -114,10 +113,10 @@ will send the message to all the browsers / tabs.
 + [X] ~~add diagrams~~
 + [X] ~~add requirements.txt for python libraries~~
 + [X] ~~document used ports and how to launch nodejs / python server~~
-+ [X] explain what uuidCookie is
++ [X] ~~explain what uuidCookie is~~
++ [ ] move serving of HTML from Node.JS to Python
++ [ ] check if Express is really requiered
 * [ ] add Django and uWSGI (this will take some this... I'm working on it on the 'django' branch)
-* [ ] make work proxying of POSTs on Node.JS (to avoid Access-Control-Allow-Origin problems).
-  * This is requiered only when NOT using Nginx
 
 
 ## Sequence diagram
