@@ -7,11 +7,11 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 
 ### Overview
 
-* the **Python** server emulates a web application. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), and knows the *userId* (the `request.user.id` in Django). To share the *userId* with Node.JS, a random UUID is generated (called uuidCookie), and is stored in Redis for 5 seconds.
+* the **Python** application emulates a **normal web application**. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), knows the *userId* (the `request.user.id` in Django). To share the *userId* with Node.JS, a random UUID is generated (called `uuidCookie`), and is stored in Redis for 5 seconds.
 
-* the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from Redis to Socket.IO. Node.JS receives the *uuidCookie* from the browser, and retrieves the *userId* from Redis. The *userId* is used to generate the Redis channel name (for example: '/app/user/<USER_ID>/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using Socket.IO.
+* the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from Redis to Socket.IO. Node.JS receives the `uuidCookie` from the browser, and retrieves the *userId* from Redis. The *userId* is used to generate the Redis channel name (for example: '/app/user/<USER_ID>/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using Socket.IO.
 
-* the **browser** uses Ajax to retrieve the *uuidCookie* from the web application (Python), and send this *uuidCookie* to *Node.JS* to start receiving notifications for the logged in user. Since the browsers and Ajax calls communicates with *Nginx*, all this happens in the same domain, avoiding a lot of problems.
+* the **browser** uses Ajax to retrieve the `uuidCookie` from the web application (Python), and send this `uuidCookie` to *Node.JS* to start receiving notifications for the logged in user. Since the browsers and Ajax calls communicates with *Nginx*, all this happens in the same domain, avoiding a lot of problems (Same Origin Policy and related restrictions).
 
 * **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
 
@@ -24,27 +24,22 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 There are 4 servers:
 
 * Nginx
-  * to expose all the software within a single URL (avoid Access-Control-Allow-Origin problems)
+  * to expose all the software within a single domain
   * support websockets :-D
+  * See [nginx.conf](nginx.conf)
 * Python
-  * The main web server / application server
+  * The web application server, where the business logic live
   * See [server.py](server.py)
 * Node.JS + Socket.IO
   * Subscribe to a Redis channel and send received messages to the browser using Socket.IO
   * Each user of the "original" application got a differetn channel
   * See [app.js](app.js)
 * Redis
-  * used to share a 'cookie' between Python and Node.JS, to securely identify the user from NodeJS
+  * used to share the `uuidiCooki` between Python and Node.JS
   * used to implement publisher/subscriber... Any message published to Redis will be sent to the user using Socket.IO
 
-## Uses
 
-* Redis server
-* Nginx server
-* Node.JS + Express + Socket.IO + radis client
-* Python + python redis client
-
-## How to use
+## How to install and use
 
 Clone this repo and install Node.JS and Python libraries
 
@@ -74,7 +69,7 @@ Start Python server
 
 Go to: [http://localhost:3333/io](http://localhost:3333/io), and clic the link "**Notifications**", and send messages to yourself.
 
-#### How to send messages from CLI + use multiple browsers / tabs
+#### How to send messages from CLI or use multiple browsers or browser tabs
 
 In the console running Node.JS, you should see a message saying something like:
 
@@ -119,7 +114,7 @@ will send the message to all the browsers / tabs.
 + [X] ~~add diagrams~~
 + [X] ~~add requirements.txt for python libraries~~
 + [X] ~~document used ports and how to launch nodejs / python server~~
-+ [ ] explain what uuidCookie is
++ [X] explain what uuidCookie is
 * [ ] add Django and uWSGI (this will take some this... I'm working on it on the 'django' branch)
 * [ ] make work proxying of POSTs on Node.JS (to avoid Access-Control-Allow-Origin problems).
   * This is requiered only when NOT using Nginx
