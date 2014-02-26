@@ -26,7 +26,7 @@
 			<textarea class="form-control" rows="3" name="message-text"
 				id="message-text"></textarea>
 			<input type="submit" id="send-button" class="btn btn-primary"
-				value="Send">
+				value="Send"> <input type="hidden" id="user-id" name="user-id" value="">
 		</form>
 
 		<h1>User's notifications</h1>
@@ -61,10 +61,12 @@
                 function(msg) {
                   if (msg.ok === true) {
                     console.log("UUID-Cookie received from server using AJAX: "
-                        + msg.uuidCookie);
+                        + msg.uuidCookie + " - userId: " + msg.userId);
 
                     // 2. Use that UUID to subscribe to events
                     console.log('uuidCookie: ' + msg.uuidCookie);
+                    console.log('userId: ' + msg.userId);
+                    $('#user-id').val(msg.userId);
                     addLog('Trying to subscribe to notifications');
                     socket.emit('subscribe-to-notifications', {
                       uuid : msg.uuidCookie

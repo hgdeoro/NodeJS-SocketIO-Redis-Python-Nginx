@@ -3,6 +3,7 @@
 Copyright (c) 2014 Horacio G. de Oro - hgdeoro@gmail.com
 MIT License - See LICENSE.txt
 """
+import random
 
 """
 This emulates the "original" application.
@@ -54,7 +55,7 @@ def send_message(user_id, message):
     redis_server.publish(url, message)
 
 
-def store_uuid_cookie():
+def store_uuid_cookie(userId):
     """
     Generates an uuidCookie and store it in Radis.
     Returns: uuid (string) if stored correctly
@@ -67,7 +68,7 @@ def store_uuid_cookie():
 
     expire = 5  # 5 seconds
     set_result = redis_server.set("cookie-" + uuid_cookie,
-                                  USER_ID,
+                                  userId,
                                   expire,
                                   nx=True)
 
@@ -80,15 +81,22 @@ def store_uuid_cookie():
 class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
 
     def do_GET(self):
+        if USER_ID == 'RANDOM':
+            userId = str(random.randint(1, 999999))
+            print "Generated userId: {0}".format(userId)
+        else:
+            userId = USER_ID
+
         # REDIS -> SET cookie-5ebc3e41-709c-4dc7-857c-15233c96516a 12345 EX 10 NX
         try:
-            uuid_cookie = store_uuid_cookie()
+            uuid_cookie = store_uuid_cookie(userId)
         except ConnectionError:
             self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
             self.wfile.write(json.dumps({"ok" : False,
                                          "uuidCookie": None,
+                                         "userId": userId,
                                          "message": "Connection to Redis failed." }))
             return
 
@@ -97,6 +105,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header("Content-type", "application/json")
             self.end_headers()
             self.wfile.write(json.dumps({"ok" : True,
+                                         "userId": userId,
                                          "uuidCookie": uuid_cookie }))
         else:
             # It's almos imposible that the same UUID already exists in redis!
@@ -105,6 +114,7 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.send_header("Content-type", "application/json")
             self.end_headers()
             self.wfile.write(json.dumps({"ok" : False,
+                                         "userId": userId,
                                          "uuidCookie": None }))
 
     def do_POST(self):
@@ -112,8 +122,9 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
         length = int(self.headers.getheader('content-length'))
         postvars = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
         message = postvars['message-text'][0]
+        userId = postvars['user-id'][0]
 
-        send_message(USER_ID, message)
+        send_message(userId, message)
 
         self.send_response(200)
         self.send_header("Content-type", "application/json")

@@ -172,7 +172,16 @@ function subscribeUserToNotifications(socket, redisClient, redisKey, redis_err,
   // Subscribe to URL of notifications for the user
   //
   var url = '/app/user/' + userId + '/notifications';
-  console.log("Subscribing to " + url);
+  console.log('//------------------------------------------------------------');
+  console.log('//');
+  console.log("// Subscribing to Reids channel: " + url);
+  console.log('//');
+  console.log('// To send messages from the command line, run:');
+  console.log('//');
+  console.log('// $ redis-cli');
+  console.log('// redis 127.0.0.1:6379> PUBLISH ' + url + ' "Hey" ');
+  console.log('//');
+  console.log('//------------------------------------------------------------');
   redisClient.subscribe(url);
 
   // Inform client the subscription was done

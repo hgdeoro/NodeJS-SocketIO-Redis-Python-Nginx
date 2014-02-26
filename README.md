@@ -58,9 +58,41 @@ Start the Node.JS app
 
 Start Python server
 
-    $ env SAMPLE_USERID=5654 python server.py
+    $ env SAMPLE_USERID=RANDOM python server.py
 
-Go to: [http://localhost:3333/io](http://localhost:3333/io)
+Go to: [http://localhost:3333/io](http://localhost:3333/io), and clic the link "**Notifications**", and send messages to yourself.
+
+#### How to send messages from CLI + use multiple browsers / tabs
+
+In the console running Node.JS, you should see a message saying something like:
+
+    //------------------------------------------------------------
+    //
+    // Subscribing to Reids channel: /app/user/976264/notifications
+    //
+    // To send messages from the command line, run:
+    //
+    // $ redis-cli
+    // redis 127.0.0.1:6379> PUBLISH /app/user/976264/notifications "Hey" 
+    //
+    //------------------------------------------------------------
+
+Each browser / browser tab simulates a different user (technically, each time the Python server
+is asked for the userId, it generates a random user id). Each message sent from the web page is sent
+to the same user (other browser or tabs SHOULD NOT receive the text).
+
+To send a message from the command line, run `redis-cli`, and publish a message
+to some of the users' channels (use the channel name from the log message above):
+
+PUBLISH /app/user/976264/notifications "Hey"
+
+If you want the Python server returning the same user id (for example, 12345), you must start the server with:
+
+    $ env SAMPLE_USERID=12345 python server.py
+
+In this case, opening multiple tabs and publishing a message to the Redis channel named '/app/user/12345/notifications'
+will send the message to all the browsers / tabs.
+
 
 ## TODO
 
@@ -68,8 +100,8 @@ Go to: [http://localhost:3333/io](http://localhost:3333/io)
 + [X] add instructios to use with/without Nginx
 + [X] ~~add diagrams~~
 + [X] ~~add requirements.txt for python libraries~~
++ [X] ~~document used ports and how to launch nodejs / python server~~
 + [ ] add Django and uWSGI
-+ [ ] document used ports and how to launch nodejs / python server
 + [ ] explain what uuidCookie is
 
 
