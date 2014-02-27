@@ -27,23 +27,31 @@
 		<div class="alert alert-dismissable alert-warning">The Django
 			app is a WIP.</div>
 
+    {% if user.is_authenticated %}
+    <div>
+      <small>Welcome, <strong>{{ user.username }}</strong>!
+      &nbsp;-&nbsp;
+      <a href="/logout">Logout</a></small>
+    </div>
+    {% else %}
 		<h4>Login</h4>
 		<p>
 		<form class="form-inline" role="form" action="." method="post">
 			{% csrf_token %}
 			<div class="form-group">
 				<label class="sr-only" for="usernameTextbox">Username</label> <input
-					type="email" class="form-control" id="usernameTextbox"
-					placeholder="username">
+					type="text" class="form-control" id="usernameTextbox"
+					placeholder="username" name="username">
 			</div>
 			<div class="form-group">
 				<label class="sr-only" for="passwordBox">Password</label> <input
 					type="password" class="form-control" id="passwordBox"
-					placeholder="password">
+					placeholder="password" name="password">
 			</div>
 			<button type="submit" class="btn btn-primary">Sign in</button>
 		</form>
 		</p>
+    {% endif %}
 
 		<h4>Quick links</h4>
 		<p>
