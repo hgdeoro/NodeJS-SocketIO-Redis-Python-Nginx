@@ -2,24 +2,32 @@
 
 {% block content %}
 
-		<form action="" method="post" id="form">
-			<textarea class="form-control" rows="3" name="message-text"
-				id="message-text"></textarea>
-			<input type="submit" id="send-button" class="btn btn-primary"
-				value="Send"> <input type="hidden" id="user-id"
-				name="user-id" value="">
+		<form action="" method="post" id="form" class="form-horizontal" role="form">
+		  <div class="form-group">
+		    <label for="inputMessage" class="col-sm-4 control-label">Message</label>
+		    <div class="col-sm-8">
+		      <textarea class="form-control" name="message-text"
+		        id="message-text"></textarea>
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <div class="col-sm-offset-4 col-sm-8">
+		      <input type="submit" id="send-button" class="btn btn-primary" value="Send">
+		      <input type="hidden" id="user-id" name="user-id" value="">
+		    </div>
+		  </div>
 		</form>
 
 		<h1>User's notifications</h1>
 		<div id="messages"></div>
 
-	<!-- ================================================== -->
-	<!-- == JavaScripts -->
-	<!-- ================================================== -->
+{% endblock content %}
 
-	<script src="/socket.io/socket.io.js"></script>
+{% block javascript %}
 
-	<script type="text/javascript">
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script type="text/javascript">
     //
     // Retrieves the uuidCookie using Ajax
     //
@@ -111,4 +119,4 @@
     });
   </script>
 
-{% endblock content %}
+{% endblock javascript %}
