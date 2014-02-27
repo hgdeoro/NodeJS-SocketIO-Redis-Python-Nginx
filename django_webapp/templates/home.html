@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Node.JS + Socket.IO + Redis + Python</title>
+<title>Node.JS + Socket.IO + Redis + Python + Django</title>
 <link rel="stylesheet"
 	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -13,7 +13,7 @@
 <body>
 	<div class="container">
 
-		<h1>Node.JS + Socket.IO + Redis + Python</h1>
+		<h1>Node.JS + Socket.IO + Redis + Python + Django</h1>
 
 		{% for message in messages %}
 		<div class="alert alert-dismissable {{ message.tags }}">
@@ -24,7 +24,28 @@
 
 		<!--  -->
 
-		<em>The Django app is a WIP.</em>
+		<div class="alert alert-dismissable alert-warning">The Django
+			app is a WIP.</div>
+
+		<h4>Login</h4>
+		<p>
+		<form class="form-inline" role="form" action="." method="post">
+		{% csrf_token %}
+			<div class="form-group">
+				<label class="sr-only" for="usernameTextbox">Username</label> <input
+					type="email" class="form-control" id="usernameTextbox"
+					placeholder="username">
+			</div>
+			<div class="form-group">
+				<label class="sr-only" for="passwordBox">Password</label> <input
+					type="password" class="form-control" id="passwordBox"
+					placeholder="password">
+			</div>
+			<button type="submit" class="btn btn-primary">Sign in</button>
+		</form>
+		</p>
+
+		<h4>Quick links</h4>
 		<p>
 		<ul>
 			<li><a href="/python/uuidCookie/">Get a uuidCookie (access
@@ -33,6 +54,7 @@
 			<li><a href="/python/notifications/">Notifications test</a></li>
 		</ul>
 		</p>
+
 
 	</div>
 	<!-- /container -->

@@ -30,8 +30,12 @@ class JsonResponse(HttpResponse):
 
 
 def home(request):
-    return render_to_response('home.html',
-                              context_instance=RequestContext(request))
+    if request.method == 'POST':
+        messages.error(request, "LOGIN NOT IMPLEMENTED")
+        return HttpResponseRedirect(reverse('home'))
+    else:
+        return render_to_response('home.html',
+                                  context_instance=RequestContext(request))
 
 
 def notifications(request):
