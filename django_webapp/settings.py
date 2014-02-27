@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
-
 """
 Django settings for django_webapp project.
 
@@ -11,9 +9,16 @@ https://docs.djangoproject.com/en/1.6/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
+from __future__ import unicode_literals
+
+import logging
 import os
+
+from django.contrib import messages
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -88,5 +93,12 @@ STATIC_URL = '/static/'
 
 LOGGING_CONFIG = None
 
-import logging
 logging.basicConfig(level=logging.INFO)
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

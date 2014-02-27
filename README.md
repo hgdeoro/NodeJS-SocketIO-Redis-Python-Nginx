@@ -48,7 +48,8 @@ Clone this repo and install Node.JS and Python libraries
     $ virtualenv --no-site-packages virtualenv
     $ . virtualenv/bin/activate
     $ pip install -r requirements.txt
-    $ python manage.py syncdb
+    $ python manage.py syncdb (will create the DB and a new user)
+    $ python manage.py createsuperuser (OPTIONAL - to create aditional users, to test per-user notifications)
 
 Setup Nginx and start it
 

@@ -13,12 +13,23 @@
 <body>
 	<div class="container">
 
-    <em>The Django app is a WIP.</em>
-
 		<h1>Node.JS + Socket.IO + Redis + Python</h1>
+
+		{% for message in messages %}
+		<div class="alert alert-dismissable {{ message.tags }}">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{ message }}
+		</div>
+		{% endfor %}
+
+		<!--  -->
+
+		<em>The Django app is a WIP.</em>
 		<p>
 		<ul>
-			<li><a href="/python/uuidCookie/">Get a uuidCookie (access the <strong>Python</strong> app)</a></li>
+			<li><a href="/python/uuidCookie/">Get a uuidCookie (access
+					the <strong>Python</strong> app)
+			</a></li>
 			<li><a href="/python/notifications/">Notifications test</a></li>
 		</ul>
 		</p>
