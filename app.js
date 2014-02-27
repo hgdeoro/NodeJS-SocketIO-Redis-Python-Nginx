@@ -8,8 +8,6 @@
  */
 
 var _express = require('express');
-var _routes = require('./routes');
-var _notifications = require('./routes/notifications');
 var _http = require('http');
 var _path = require('path');
 var _io = require('socket.io');
@@ -23,15 +21,11 @@ var app = _express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
-app.set('views', _path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 app.use(_express.favicon());
 app.use(_express.logger('dev'));
 app.use(_express.json());
 app.use(_express.urlencoded());
 app.use(_express.methodOverride());
-app.use(app.router);
-app.use(_express.static(_path.join(__dirname, 'public')));
 
 // development only
 if ('development' === app.get('env')) {
@@ -44,17 +38,6 @@ if ('development' === app.get('env')) {
 
 var server = _http.createServer(app);
 var io = _io.listen(server);
-
-/*
- * Map URLs
- */
-
-app.get('/', function(req, res) {
-  res.redirect('/io');
-  res.end();
-});
-app.get('/io', _routes.index);
-app.get('/io/notifications', _notifications.notifications);
 
 //
 // Subscribe to the Redis to receive notifications, and re-send it to the client

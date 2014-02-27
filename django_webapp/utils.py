@@ -2,13 +2,20 @@
 
 from __future__ import unicode_literals
 
+import random
+import uuid
+
 import redis
+import logging
 
 
 redis_server = redis.StrictRedis(host='localhost', port=6379, db=0)
 
+logger = logging.getLogger(__name__)
+
 
 def send_message(user_id, message):
+    logger.info("send_message() - user_id: '%s' - message: '%s'", user_id, message)
     url = "/app/user/{0}/notifications".format(user_id)
     redis_server.publish(url, message)
 
@@ -16,18 +23,21 @@ def send_message(user_id, message):
 def store_uuid_cookie():
     """
     Generates an uuidCookie and store it in Radis.
-    Returns: uuid (string) if stored correctly
+    Returns: tuple with (uuidCookie, userId) (str, str) if stored correctly
     Returns: None if cookie couldn't be stored
     """
     uuid_cookie = str(uuid.uuid4())
+    user_id = str(random.randint(1, 999999))
+    logger.info("store_uuid_cookie() - uuid_cookie: '%s' - user_id: '%s'", uuid_cookie, user_id)
 
     expire = 5  # 5 seconds
     set_result = redis_server.set("cookie-" + uuid_cookie,
-                                  USER_ID,
+                                  user_id,
                                   expire,
                                   nx=True)
 
     if set_result is True:
-        return uuid_cookie
+        return uuid_cookie, user_id
     else:
+        logger.error("store_uuid_cookie() - redis_server.set() FAILED")
         return None

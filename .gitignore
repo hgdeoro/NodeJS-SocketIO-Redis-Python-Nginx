@@ -2,3 +2,4 @@
 /node_modules
 /repos
 /virtualenv
+/db.sqlite3

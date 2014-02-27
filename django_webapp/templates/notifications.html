@@ -5,7 +5,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Node.JS + Socket.IO + Redis + Python</title>
-<link rel="stylesheet" href="/stylesheets/style.css">
 <link rel="stylesheet"
 	href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -22,11 +21,14 @@
 <body>
 	<div class="container">
 
+		<em>The Django app is a WIP.</em>
+
 		<form action="" method="post" id="form">
 			<textarea class="form-control" rows="3" name="message-text"
 				id="message-text"></textarea>
 			<input type="submit" id="send-button" class="btn btn-primary"
-				value="Send"> <input type="hidden" id="user-id" name="user-id" value="">
+				value="Send"> <input type="hidden" id="user-id"
+				name="user-id" value="">
 		</form>
 
 		<h1>User's notifications</h1>
@@ -55,7 +57,7 @@
         $
             .ajax({
               type : "GET",
-              url : "/python",
+              url : "/python/uuidCookie/",
             })
             .done(
                 function(msg) {
@@ -98,7 +100,7 @@
 
     $(document).ready(function() {
 
-      var postUrl = '/python';
+      var postUrl = '/python/postMessage/';
 
       $("#form").submit(function(event) {
         event.preventDefault();
