@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node.JS + Socket.IO + Redis + Python + Django</title>
+<link rel="stylesheet"
+  href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<link rel="stylesheet"
+  href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+</head>
+<body>
+  <div class="container">
+
+    <h1>Node.JS + Socket.IO + Redis + Python + Django</h1>
+
+    {% for message in messages %}
+    <div class="alert alert-dismissable {{ message.tags }}">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ message }}
+    </div>
+    {% endfor %}
+
+    <!--  -->
+
+    <div class="alert alert-dismissable alert-warning">The Django
+      app is a WIP.</div>
+
+    {% block content %}
+    {% endblock content %}
+
+
+  </div>
+  <!-- /container -->
+
+  <!-- ================================================== -->
+  <!-- == JavaScripts -->
+  <!-- ================================================== -->
+
+  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script
+    src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+</body>
+</html>
