@@ -2,14 +2,14 @@
 
 **DISCLAIMER: this branch will contain a Django application. This is not finished yet, and this branch may be rebased**
 
-Simple *Node.JS* + *Socket.IO* application integrated to *Python* using *Redis* and published to the web using *Nginx*.
-Python isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
+Simple *Node.JS* + *Socket.IO* application integrated to *Python/Django* using *Redis* and published to the web using *Nginx*.
+Python/Django isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
 
 This **IS NOT** a *public chat* nor *message broadcast* example. Each user get it's own notifications.
 
 ### Overview
 
-* the **Python** application emulates a **normal web application**. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), knows the *userId* (the `request.user.id` in Django). To share the *userId* with Node.JS, a random UUID is generated (called `uuidCookie`), and is stored in Redis for 5 seconds.
+* the **Python/Django** application is a simple web application. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), knows the *userId* (the `request.user.id` in Django). To share the *userId* with Node.JS, a random UUID is generated (called `uuidCookie`), and is stored in Redis for 5 seconds.
 
 * the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from Redis to Socket.IO. Node.JS receives the `uuidCookie` from the browser, and retrieves the *userId* from Redis. The *userId* is used to generate the Redis channel name (for example: '/app/user/*USER_ID*/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using Socket.IO.
 
@@ -17,10 +17,7 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 
 * **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
 
-
-
 ![Overview](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/NodeJS-SocketIO-Redis-Python-Nginx.png)
-
 
 ## Servers
 
@@ -30,9 +27,9 @@ There are 4 servers:
   * to expose all the software within a single domain
   * support websockets :-D
   * See [nginx.conf](nginx.conf)
-* Python
+* Python/Django
   * The web application server, where the business logic live
-  * See [server.py](server.py)
+  * See [django_webapp/utils.py](django_webapp/utils.py) and [django_webapp/views.py](django_webapp/views.py) 
 * Node.JS + Socket.IO
   * Subscribe to a Redis channel and send received messages to the browser using Socket.IO
   * See [app.js](app.js)
@@ -51,6 +48,7 @@ Clone this repo and install Node.JS and Python libraries
     $ virtualenv --no-site-packages virtualenv
     $ . virtualenv/bin/activate
     $ pip install -r requirements.txt
+    $ python manage.py syncdb
 
 Setup Nginx and start it
 
@@ -63,13 +61,13 @@ Start Redis
 
 Start the Node.JS app
 
-    $ env NGINX=true node app.js
+    $ node app.js
 
-Start Python server
+Start Python/Django server
 
-    $ env SAMPLE_USERID=RANDOM python server.py
+    $ python manage.py runserver 3010 
 
-Go to: [http://localhost:3333/io](http://localhost:3333/io), and clic the link "**Notifications**", and send messages to yourself.
+Go to: [http://localhost:3333/](http://localhost:3333/), and clic the link "**Notifications**", and send messages to yourself.
 
 #### How to send messages from CLI or use multiple browsers or browser tabs
 
@@ -108,7 +106,7 @@ will send the message to all the browsers / tabs.
 
 * Nginx: 3333
 * Node.JS: 3000
-* Python: 3010
+* Python/Django: 3010
 
 ## TODO
 
