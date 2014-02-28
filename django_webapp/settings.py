@@ -102,3 +102,13 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+"""
+Expiration time of uuidCookie (in seconds)
+"""
+UUIDCOOKIE_EXPIRE_TIME = 5
+UUIDCOOKIE_PREFIX = 'cookie-'
+
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+REDIS_DB = 0

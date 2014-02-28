@@ -20,6 +20,7 @@ var _redis = require('redis');
 var app = _express();
 
 // all environments
+var UUIDCOOKIE_PREFIX = process.env.UUIDCOOKIE_PREFIX || 'cookie-';
 app.set('port', process.env.PORT || 3000);
 app.use(_express.favicon());
 app.use(_express.logger('dev'));
@@ -169,7 +170,7 @@ io.of('/io/user/notifications').on('connection', function(socket) {
   socket.on('subscribe-to-notifications', function(data) {
     console.log('subscribe-to-notifications - data.uuid: "' + data.uuid);
 
-    var redisKey = 'cookie-' + data.uuid;
+    var redisKey = UUIDCOOKIE_PREFIX + data.uuid;
     var redisClient = _redis.createClient();
     redisClient.get(redisKey, function(err, reply) {
       subscribeUserToNotifications(socket, redisClient, redisKey, err, reply);
