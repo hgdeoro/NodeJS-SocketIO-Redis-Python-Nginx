@@ -66,8 +66,9 @@ def uuid_cookie(request):
                              "uuidCookie": None,
                              "userId": None,
                              "message": "User isn't authenticated." })
+    user_id = str(request.user.id)
     try:
-        uuid_cookie, user_id = store_uuid_cookie(str(request.user.id))
+        uuid_cookie = store_uuid_cookie(user_id)
     except ConnectionError:
         return JsonResponse({"ok" : False,
                              "uuidCookie": None,

@@ -35,7 +35,7 @@ def store_uuid_cookie(user_id):
                                   nx=True)
 
     if set_result is True:
-        return uuid_cookie, user_id
+        return uuid_cookie
     else:
         logger.error("store_uuid_cookie() - redis_server.set() FAILED")
         return None
