@@ -2,7 +2,6 @@
 
 from __future__ import unicode_literals
 
-import random
 import uuid
 
 import redis
@@ -20,14 +19,13 @@ def send_message(user_id, message):
     redis_server.publish(url, message)
 
 
-def store_uuid_cookie():
+def store_uuid_cookie(user_id):
     """
     Generates an uuidCookie and store it in Radis.
     Returns: tuple with (uuidCookie, userId) (str, str) if stored correctly
     Returns: None if cookie couldn't be stored
     """
     uuid_cookie = str(uuid.uuid4())
-    user_id = str(random.randint(1, 999999))
     logger.info("store_uuid_cookie() - uuid_cookie: '%s' - user_id: '%s'", uuid_cookie, user_id)
 
     expire = 5  # 5 seconds

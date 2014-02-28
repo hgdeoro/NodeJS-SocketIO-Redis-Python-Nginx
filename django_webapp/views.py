@@ -61,8 +61,13 @@ def notifications(request):
 
 
 def uuid_cookie(request):
+    if not request.user.is_authenticated():
+        return JsonResponse({"ok" : False,
+                             "uuidCookie": None,
+                             "userId": None,
+                             "message": "User isn't authenticated." })
     try:
-        uuid_cookie, user_id = store_uuid_cookie()
+        uuid_cookie, user_id = store_uuid_cookie(str(request.user.id))
     except ConnectionError:
         return JsonResponse({"ok" : False,
                              "uuidCookie": None,
@@ -76,7 +81,8 @@ def uuid_cookie(request):
     else:
         return JsonResponse({"ok" : False,
                              "userId": None,
-                             "uuidCookie": None })
+                             "uuidCookie": None,
+                             "message": "Couldn't generate a valid uuidCookie." })
 
 
 # FIXME: remove "@csrf_exempt"
