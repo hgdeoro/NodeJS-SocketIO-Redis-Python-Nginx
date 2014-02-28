@@ -164,20 +164,25 @@ function subscribeUserToNotifications(socket, redisClient, redisKey, redis_err,
 //
 //
 
-io.of('/io/user/notifications').on('connection', function(socket) {
-  console.log('Connection from ' + socket);
+io.of('/io/user/notifications').on(
+    'connection',
+    function(socket) {
+      var address = socket.handshake.address;
+      console.log('Connection from ' + address.address + ':' + address.port
+          + ' with transport: ' + io.transports[socket.id].name);
 
-  socket.on('subscribe-to-notifications', function(data) {
-    console.log('subscribe-to-notifications - data.uuid: "' + data.uuid);
+      socket.on('subscribe-to-notifications', function(data) {
+        console.log('subscribe-to-notifications - data.uuid: "' + data.uuid);
 
-    var redisKey = UUIDCOOKIE_PREFIX + data.uuid;
-    var redisClient = _redis.createClient();
-    redisClient.get(redisKey, function(err, reply) {
-      subscribeUserToNotifications(socket, redisClient, redisKey, err, reply);
+        var redisKey = UUIDCOOKIE_PREFIX + data.uuid;
+        var redisClient = _redis.createClient();
+        redisClient.get(redisKey, function(err, reply) {
+          subscribeUserToNotifications(socket, redisClient, redisKey, err,
+              reply);
+        });
+      });
+
     });
-  });
-
-});
 
 server.listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
