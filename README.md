@@ -109,17 +109,9 @@ will send the message to all the browsers / tabs.
 * Node.JS: 3000
 * Python/Django: 3010
 
-## TODO
+## Issues
 
-* [X] ~~add instructios to use with/without Nginx~~
-+ [X] ~~add diagrams~~
-+ [X] ~~add requirements.txt for python libraries~~
-+ [X] ~~document used ports and how to launch nodejs / python server~~
-+ [X] ~~explain what uuidCookie is~~
-+ [ ] move serving of HTML from Node.JS to Python
-+ [ ] check if Express is really requiered
-* [ ] add Django and uWSGI (this will take some this... I'm working on it on the 'django' branch)
-
+See them at GitHub issues.
 
 ## Sequence diagram
 
