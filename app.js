@@ -10,10 +10,12 @@
 var _http = require('http');
 var _io = require('socket.io');
 var _redis = require('redis');
+var _request = require('request');
 
 // all environments
 var UUIDCOOKIE_PREFIX = process.env.UUIDCOOKIE_PREFIX || 'cookie-';
 var HTTP_PORT = process.env.PORT || 3000;
+var SUBSCRIBE_BY_COOKIES_URL = process.env.SUBSCRIBE_BY_COOKIES_URL || '';
 
 /*
  * Setup HTTP server and Socket.IO
@@ -28,49 +30,14 @@ var io = _io.listen(server, {
 // Subscribe to the Redis to receive notifications, and re-send it to the client
 // using Socket.IO.
 //
-// This function is the callback passed to 'redisClient.get()'
-//
 // - socket: Socket.IO object to send notifications to the user
 // - redisClient: Redis client, used to subscribe to PUB/SUB messages
-// - redisKey: needed to delete the key from Redis after successful retrieval
-// - redis_err: redis error, if get() failed this is !== null
-// - redis_reply: the value associated to the requested KEY
+// - userId: the currently logged in userId
 //
 
-function subscribeUserToNotifications(socket, redisClient, redisKey, redis_err,
-    redis_reply) {
+function subscribeUserToNotifications(socket, redisClient, userId) {
 
-  console.log('redisClient.get() - redis_err: "' + redis_err
-      + '" - redis_reply: "' + redis_reply + '"');
-
-  // Check if response from Redis is valid
-  if (redis_err !== null) {
-    socket.emit('internal', {
-      type : 'error',
-      code : 'USER_ID_RETRIEVAL_RETURNED_ERROR',
-      message : 'Error detected when trying to get user id.'
-    });
-    return;
-  }
-
-  // Check if response from Redis is valid
-  if (redis_reply === null) {
-    socket.emit('internal', {
-      type : 'error',
-      code : 'USERID_IS_NULL',
-      message : 'Couldn\'t get userId.'
-    });
-    return;
-  }
-
-  // FIXME: should use something like 'get-and-delete' if exists
-  // FIXME: is this realy neccesary? The key expires quickly, so,
-  // maybe this isn't required
-  console.log("Removing retrieved key from Redis");
-  redisClient.del(redisKey);
-
-  var redisReplyObj = JSON.parse(redis_reply);
-  var userId = redisReplyObj.userId;
+  // var userId = redisReplyObj.userId;
 
   //
   // Hanlde Redis errors
@@ -119,6 +86,58 @@ function subscribeUserToNotifications(socket, redisClient, redisKey, redis_err,
 }
 
 //
+// Subscribe to the Redis to receive notifications, and re-send it to the client
+// using Socket.IO.
+//
+// This function is the callback passed to 'redisClient.get()'
+//
+// - socket: Socket.IO object to send notifications to the user
+// - redisClient: Redis client, used to subscribe to PUB/SUB messages
+// - redisKey: needed to delete the key from Redis after successful retrieval
+// - redis_err: redis error, if get() failed this is !== null
+// - redis_reply: the value associated to the requested KEY
+//
+
+function subscribeUserToNotificationsByUuidCookie(socket, redisClient,
+    redisKey, redis_err, redis_reply) {
+
+  console.log('redisClient.get() - redis_err: "' + redis_err
+      + '" - redis_reply: "' + redis_reply + '"');
+
+  // Check if response from Redis is valid
+  if (redis_err !== null) {
+    socket.emit('internal', {
+      type : 'error',
+      code : 'USER_ID_RETRIEVAL_RETURNED_ERROR',
+      message : 'Error detected when trying to get user id.'
+    });
+    return;
+  }
+
+  // Check if response from Redis is valid
+  if (redis_reply === null) {
+    socket.emit('internal', {
+      type : 'error',
+      code : 'USERID_IS_NULL',
+      message : 'Couldn\'t get userId.'
+    });
+    return;
+  }
+
+  // FIXME: should use something like 'get-and-delete' if exists
+  // FIXME: is this realy neccesary? The key expires quickly, so,
+  // maybe this isn't required
+  console.log("Removing retrieved key from Redis");
+  redisClient.del(redisKey);
+
+  var redisReplyObj = JSON.parse(redis_reply);
+  var userId = redisReplyObj.userId;
+
+  subscribeUserToNotifications(socket, redisClient, userId);
+
+}
+
+//
 // Attache '/io/user/notifications' to SocketIO
 //
 // When a client tryies to subscribe to notifications, it must send a
@@ -162,16 +181,74 @@ io.of('/io/user/notifications').on(
         var redisKey = UUIDCOOKIE_PREFIX + data.uuid;
         var redisClient = _redis.createClient();
         redisClient.get(redisKey, function(err, reply) {
-          subscribeUserToNotifications(socket, redisClient, redisKey, err,
-              reply);
+          subscribeUserToNotificationsByUuidCookie(socket, redisClient,
+              redisKey, err, reply);
         });
+      });
+
+      // console.log('Cookies: \'' + socket.handshake.headers.cookie +
+      // '\'');
+      // >>> Cookies: 'org.cups.sid=93f1b7c64591d501c97c47be3a6f2ddd;
+      // >>>>>> __atuvc=17%7C4; csrftoken=U47JfEkPe57xiAOqV1tZGsZ5Birp5KQi;
+      // >>>>>> sessionid=4ualeiw6ojrxcqx2uhil56o8go75zyoq'
+
+      socket.on('subscribe-to-notifications-by-cookies', function(data) {
+        console.log('subscribe-to-notifications-by-cookies');
+
+        if (SUBSCRIBE_BY_COOKIES_URL === '') {
+          console.log('SUBSCRIBE_BY_COOKIES_URL is EMPTY');
+          socket.emit('internal', {
+            type : 'error',
+            code : 'SUBSCRIBE_BY_COOKIES_NOT_AVAILABLE',
+            message : 'Subscribe by cookies isn\'t available in the server.'
+          });
+          return;
+        }
+
+        console.log('SUBSCRIBE_BY_COOKIES - Sending request to '
+            + SUBSCRIBE_BY_COOKIES_URL);
+
+        _request.get(SUBSCRIBE_BY_COOKIES_URL, {
+          headers : {
+            cookie : socket.handshake.headers.cookie
+          }
+        }, function(er, res, body) {
+          // subscribeUserToNotificationsByUuidCookie(...);
+          if (er) {
+            console.log('SUBSCRIBE_BY_COOKIES - Request returned error');
+            socket.emit('internal', {
+              type : 'error',
+              code : 'SUBSCRIBE_BY_COOKIES_SERVER_RETURNED_ERROR',
+              message : 'Error detected when '
+                  + 'trying to get userId from server by cookie'
+            });
+          }
+
+          if (res.statusCode !== 200) {
+            console.log('SUBSCRIBE_BY_COOKIES - '
+                + 'Status code of response != 200');
+            socket.emit('internal', {
+              type : 'error',
+              code : 'SUBSCRIBE_BY_COOKIES_SERVER_RETURNED_NON_200',
+              message : 'Server returned != 200'
+            });
+          }
+
+          console.log('SUBSCRIBE_BY_COOKIES - Received body: ' + body);
+          var userId = JSON.parse(body).userId;
+          var redisClient = _redis.createClient();
+          subscribeUserToNotifications(socket, redisClient, userId);
+
+        });
+
       });
 
     });
 
 //
 // Configuration for production
-// For further reading, see https://github.com/LearnBoost/Socket.IO/wiki/Configuring-Socket.IO
+// For further reading, see
+// https://github.com/LearnBoost/Socket.IO/wiki/Configuring-Socket.IO
 //
 
 io.configure('production', function() {
@@ -188,7 +265,7 @@ io.configure('production', function() {
 });
 
 //
-//Configuration for development
+// Configuration for development
 //
 
 io.configure('development', function() {

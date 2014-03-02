@@ -1,122 +1,129 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
-{% block content %}
+<form action="" method="post" id="form" class="form-horizontal"
+	role="form">
+  <div class="form-group">
+    <label for="inputMessage" class="col-sm-4 control-label">User ID</label>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" name="user-id" id="user-id" value="{{ user.id }}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputMessage" class="col-sm-4 control-label">Message</label>
+    <div class="col-sm-8">
+      <textarea class="form-control" name="message-text" id="message-text"></textarea>
+    </div>
+  </div>
+	<div class="form-group">
+		<div class="col-sm-offset-4 col-sm-8">
+			<input type="submit" id="send-button" class="btn btn-primary"
+				value="Send">
+		</div>
+	</div>
+</form>
 
-		<form action="" method="post" id="form" class="form-horizontal" role="form">
-		  <div class="form-group">
-		    <label for="inputMessage" class="col-sm-4 control-label">Message</label>
-		    <div class="col-sm-8">
-		      <textarea class="form-control" name="message-text"
-		        id="message-text"></textarea>
-		    </div>
-		  </div>
-		  <div class="form-group">
-		    <div class="col-sm-offset-4 col-sm-8">
-		      <input type="submit" id="send-button" class="btn btn-primary" value="Send">
-		      <input type="hidden" id="user-id" name="user-id" value="">
-		    </div>
-		  </div>
-		</form>
+<h1>User's notifications</h1>
+<div id="messages"></div>
 
-		<h1>User's notifications</h1>
-		<div id="messages"></div>
+{% endblock content %} {% block javascript %}
 
-{% endblock content %}
+<script src="/socket.io/socket.io.js"></script>
 
-{% block javascript %}
+<script type="text/javascript">
+  //
+  // Retrieves the uuidCookie using Ajax and subscribe to notifications
+  //
+  var subscribeByUuidCookie = function(socket) {
+    return function() {
+      addLog('Socket.IO connected');
+      console.log('Socket.IO connected');
 
-  <script src="/socket.io/socket.io.js"></script>
+      $.ajax({
+        type : "GET",
+        url : "/python/uuidCookie/",
+      }).done(
+          function(msg) {
+            if (msg.ok === true) {
+              console.log("UUID-Cookie received from server using AJAX: "
+                  + msg.uuidCookie);
 
-  <script type="text/javascript">
-    //
-    // Retrieves the uuidCookie using Ajax
-    //
-    var retrieveUuidCookie = function(socket) {
-      return function() {
-        addLog('Socket.IO connected');
-        console.log('Socket.IO connected');
+              // 2. Use that UUID to subscribe to events
+              console.log('uuidCookie: ' + msg.uuidCookie);
+              addLog('Trying to subscribe to notifications');
+              socket.emit('subscribe-to-notifications', {
+                uuid : msg.uuidCookie
+              });
 
-        $
-            .ajax({
-              type : "GET",
-              url : "/python/uuidCookie/",
-            })
-            .done(
-                function(msg) {
-                  if (msg.ok === true) {
-                    console.log("UUID-Cookie received from server using AJAX: "
-                        + msg.uuidCookie + " - userId: " + msg.userId);
+            } else {
+              addLog('ERROR: couldn\'t subscribe to notifications');
+              console
+                  .log("Error: the server didn't provide a valid UUID-Cookie");
+            }
+          });
 
-                    // 2. Use that UUID to subscribe to events
-                    console.log('uuidCookie: ' + msg.uuidCookie);
-                    console.log('userId: ' + msg.userId);
-                    $('#user-id').val(msg.userId);
-                    addLog('Trying to subscribe to notifications');
-                    socket.emit('subscribe-to-notifications', {
-                      uuid : msg.uuidCookie
-                    });
-
-                  } else {
-                    addLog('ERROR: couldn\'t subscribe to notifications');
-                    console
-                        .log("Error: the server didn't provide a valid UUID-Cookie");
-                  }
-                });
-
-      }
-    };
-
-    var addLog = function(msg) {
-      var newMsg = $('<div/>');
-      newMsg.addClass("alert alert-info");
-      newMsg.text('[LOG] ' + msg);
-      newMsg.appendTo('#messages');
     }
+  };
 
-    var addMessage = function(msg) {
-      var newMsg = $('<div/>');
-      newMsg.addClass("alert alert-success");
-      newMsg.text('[NOTIFICATION] ' + msg);
-      newMsg.appendTo('#messages');
-    }
+  //
+  // Subscribe to notifications user cookies
+  //
+  var subscribyByUserCookie = function(socket) {
+    socket.emit('subscribe-to-notifications-by-cookies');
+  };
 
-    $(document).ready(function() {
+  var addLog = function(msg) {
+    var newMsg = $('<div/>');
+    newMsg.addClass("alert alert-info");
+    newMsg.text('[LOG] ' + msg);
+    newMsg.appendTo('#messages');
+  }
 
-      var postUrl = '/python/postMessage/';
+  var addMessage = function(msg) {
+    var newMsg = $('<div/>');
+    newMsg.addClass("alert alert-success");
+    newMsg.text('[NOTIFICATION] ' + msg);
+    newMsg.appendTo('#messages');
+  }
 
-      $("#form").submit(function(event) {
-        event.preventDefault();
-        var posting = $.post(postUrl, $("#form").serialize());
-        posting.done(function(data) {
-          $('#message-text').val('');
-        });
+  $(document).ready(function() {
+
+    var postUrl = '/python/postMessage/';
+
+    $("#form").submit(function(event) {
+      event.preventDefault();
+      var posting = $.post(postUrl, $("#form").serialize());
+      posting.done(function(data) {
+        $('#message-text').val('');
       });
-
-      var socket = io.connect('/io/user/notifications');
-
-      socket.on('notification', function(data) {
-        console.log('Notification received: ' + data);
-        console.log(' - Message from app: ' + data.message);
-        addMessage(data.message);
-      });
-
-      socket.on('internal', function(data) {
-        console.log('Internal message received from server: ' + data);
-        if (data.type === 'error') {
-          addLog('ERROR: couldn\'t subscribe to notifications');
-          console.log('Error report received from server: ' + data);
-          console.log(' - Code: ' + data.code);
-          console.log(' - Message: ' + data.message);
-        } else if (data.type === 'success') {
-          addLog('Subscription to notifications OK');
-          console.log(' - Success: ' + data.message);
-        } else {
-          console.log('Unknown internal message type');
-        }
-      });
-
-      socket.on('connect', retrieveUuidCookie(socket));
     });
-  </script>
+
+    var socket = io.connect('/io/user/notifications');
+
+    socket.on('notification', function(data) {
+      console.log('Notification received: ' + data);
+      console.log(' - Message from app: ' + data.message);
+      addMessage(data.message);
+    });
+
+    socket.on('internal', function(data) {
+      console.log('Internal message received from server: ' + data);
+      if (data.type === 'error') {
+        addLog('ERROR: couldn\'t subscribe to notifications');
+        console.log('Error report received from server: ' + data);
+        console.log(' - Code: ' + data.code);
+        console.log(' - Message: ' + data.message);
+      } else if (data.type === 'success') {
+        addLog('Subscription to notifications OK');
+        console.log(' - Success: ' + data.message);
+      } else {
+        console.log('Unknown internal message type');
+      }
+    });
+
+    // socket.on('connect', subscribeByUuidCookie(socket));
+    socket.on('connect', subscribyByUserCookie(socket));
+
+  });
+</script>
 
 {% endblock javascript %}

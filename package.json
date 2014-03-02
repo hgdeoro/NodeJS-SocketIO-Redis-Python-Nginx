@@ -9,5 +9,6 @@
     "socket.io": "*",
     "hiredis": "*",
     "redis": "*",
+    "request": "*"
   }
 }
