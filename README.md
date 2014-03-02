@@ -53,7 +53,7 @@ Clone this repo and install Node.JS and Python libraries
 
 Setup Nginx and start it
 
-    $ sudo cp sudo cp nginx.conf /etc/nginx/sites-enabled/NodeJS-SocketIO-Redis-Python.conf
+    $ sudo cp nginx.conf /etc/nginx/sites-enabled/NodeJS-SocketIO-Redis-Python.conf
     $ sudo service nginx start
 
 Start Redis
