@@ -171,9 +171,14 @@ function subscribeUserToNotificationsByUuidCookie(socket, redisClient,
 io.of('/io/user/notifications').on(
     'connection',
     function(socket) {
+
       var address = socket.handshake.address;
       console.log('Connection from ' + address.address + ':' + address.port
           + ' with transport: ' + io.transports[socket.id].name);
+
+      // ------------------------------------------------------------
+      // subscribe-to-notifications, using uuidCookies
+      // ------------------------------------------------------------
 
       socket.on('subscribe-to-notifications', function(data) {
         console.log('subscribe-to-notifications - data.uuid: "' + data.uuid);
@@ -186,6 +191,10 @@ io.of('/io/user/notifications').on(
         });
       });
 
+      // ------------------------------------------------------------
+      // subscribe-to-notifications, using browser's cookies
+      // ------------------------------------------------------------
+
       // console.log('Cookies: \'' + socket.handshake.headers.cookie +
       // '\'');
       // >>> Cookies: 'org.cups.sid=93f1b7c64591d501c97c47be3a6f2ddd;
@@ -195,11 +204,13 @@ io.of('/io/user/notifications').on(
       socket.on('subscribe-to-notifications-by-cookies', function(data) {
         console.log('subscribe-to-notifications-by-cookies');
 
+        // If not configured the URL of the server, return
+        // the error code 'SUBSCRIBE_BY_COOKIES_NOT_AVAILABLE'
         if (SUBSCRIBE_BY_COOKIES_URL === '') {
           console.log('SUBSCRIBE_BY_COOKIES_URL is EMPTY');
           socket.emit('internal', {
             type : 'error',
-            code : 'SUBSCRIBE_BY_COOKIES_NOT_AVAILABLE',
+            code : 'SUBSCRIBE_BY_COOKIES_ERROR',
             message : 'Subscribe by cookies isn\'t available in the server.'
           });
           return;
@@ -208,28 +219,28 @@ io.of('/io/user/notifications').on(
         console.log('SUBSCRIBE_BY_COOKIES - Sending request to '
             + SUBSCRIBE_BY_COOKIES_URL);
 
+        // Send request to app. server
         _request.get(SUBSCRIBE_BY_COOKIES_URL, {
           headers : {
             cookie : socket.handshake.headers.cookie
           }
         }, function(er, res, body) {
-          // subscribeUserToNotificationsByUuidCookie(...);
+
           if (er) {
-            console.log('SUBSCRIBE_BY_COOKIES - Request returned error');
+            console.log('SUBSCRIBE_BY_COOKIES - Server returned error: ' + er);
             socket.emit('internal', {
               type : 'error',
-              code : 'SUBSCRIBE_BY_COOKIES_SERVER_RETURNED_ERROR',
-              message : 'Error detected when '
-                  + 'trying to get userId from server by cookie'
+              code : 'SUBSCRIBE_BY_COOKIES_ERROR',
+              message : 'Server returned error'
             });
           }
 
           if (res.statusCode !== 200) {
-            console.log('SUBSCRIBE_BY_COOKIES - '
-                + 'Status code of response != 200');
+            console.log('SUBSCRIBE_BY_COOKIES - Server returned statusCode: '
+                + res.statusCode);
             socket.emit('internal', {
               type : 'error',
-              code : 'SUBSCRIBE_BY_COOKIES_SERVER_RETURNED_NON_200',
+              code : 'SUBSCRIBE_BY_COOKIES_ERROR',
               message : 'Server returned != 200'
             });
           }

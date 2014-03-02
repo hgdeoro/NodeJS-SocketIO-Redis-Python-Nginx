@@ -2,18 +2,20 @@
 
 <form action="" method="post" id="form" class="form-horizontal"
 	role="form">
-  <div class="form-group">
-    <label for="inputMessage" class="col-sm-4 control-label">User ID</label>
-    <div class="col-sm-8">
-      <input type="text" class="form-control" name="user-id" id="user-id" value="{{ user.id }}">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputMessage" class="col-sm-4 control-label">Message</label>
-    <div class="col-sm-8">
-      <textarea class="form-control" name="message-text" id="message-text"></textarea>
-    </div>
-  </div>
+	<div class="form-group">
+		<label for="inputMessage" class="col-sm-4 control-label">User
+			ID</label>
+		<div class="col-sm-8">
+			<input type="text" class="form-control" name="user-id" id="user-id"
+				value="{{ user.id }}">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputMessage" class="col-sm-4 control-label">Message</label>
+		<div class="col-sm-8">
+			<textarea class="form-control" name="message-text" id="message-text"></textarea>
+		</div>
+	</div>
 	<div class="form-group">
 		<div class="col-sm-offset-4 col-sm-8">
 			<input type="submit" id="send-button" class="btn btn-primary"
@@ -34,34 +36,32 @@
   // Retrieves the uuidCookie using Ajax and subscribe to notifications
   //
   var subscribeByUuidCookie = function(socket) {
-    return function() {
-      addLog('Socket.IO connected');
-      console.log('Socket.IO connected');
+    addLog('Socket.IO connected');
+    console.log('Socket.IO connected');
 
-      $.ajax({
-        type : "GET",
-        url : "/python/uuidCookie/",
-      }).done(
-          function(msg) {
-            if (msg.ok === true) {
-              console.log("UUID-Cookie received from server using AJAX: "
-                  + msg.uuidCookie);
+    $.ajax({
+      type : "GET",
+      url : "/python/uuidCookie/",
+    }).done(
+        function(msg) {
+          if (msg.ok === true) {
+            console.log("UUID-Cookie received from server using AJAX: "
+                + msg.uuidCookie);
 
-              // 2. Use that UUID to subscribe to events
-              console.log('uuidCookie: ' + msg.uuidCookie);
-              addLog('Trying to subscribe to notifications');
-              socket.emit('subscribe-to-notifications', {
-                uuid : msg.uuidCookie
-              });
+            // 2. Use that UUID to subscribe to events
+            console.log('uuidCookie: ' + msg.uuidCookie);
+            addLog('Trying to subscribe to notifications');
+            socket.emit('subscribe-to-notifications', {
+              uuid : msg.uuidCookie
+            });
 
-            } else {
-              addLog('ERROR: couldn\'t subscribe to notifications');
-              console
-                  .log("Error: the server didn't provide a valid UUID-Cookie");
-            }
-          });
+          } else {
+            addLog('ERROR: couldn\'t subscribe to notifications');
+            console.log("Error: the server didn't "
+                + "provide a valid UUID-Cookie");
+          }
+        });
 
-    }
   };
 
   //
@@ -108,10 +108,15 @@
     socket.on('internal', function(data) {
       console.log('Internal message received from server: ' + data);
       if (data.type === 'error') {
-        addLog('ERROR: couldn\'t subscribe to notifications');
         console.log('Error report received from server: ' + data);
         console.log(' - Code: ' + data.code);
         console.log(' - Message: ' + data.message);
+        if (data.code === 'SUBSCRIBE_BY_COOKIES_ERROR') {
+          console.log('Trying with uuidCookie...');
+          subscribeByUuidCookie(socket);
+        } else {
+          addLog('ERROR: couldn\'t subscribe to notifications');
+        }
       } else if (data.type === 'success') {
         addLog('Subscription to notifications OK');
         console.log(' - Success: ' + data.message);
@@ -120,8 +125,9 @@
       }
     });
 
-    // socket.on('connect', subscribeByUuidCookie(socket));
-    socket.on('connect', subscribyByUserCookie(socket));
+    socket.on('connect', function() {
+      subscribyByUserCookie(socket);
+    });
 
   });
 </script>
