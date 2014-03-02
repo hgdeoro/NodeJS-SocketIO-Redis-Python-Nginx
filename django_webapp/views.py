@@ -86,6 +86,16 @@ def uuid_cookie(request):
                              "message": "Couldn't generate a valid uuidCookie." })
 
 
+def current_user_id(request):
+    if not request.user.is_authenticated():
+        return JsonResponse({"ok" : False,
+                             "userId": None,
+                             "message": "User isn't authenticated." })
+
+    return JsonResponse({"ok" : True,
+                         "userId": str(request.user.id)})
+
+
 # FIXME: remove "@csrf_exempt"
 @csrf_exempt
 def post_message(request):
