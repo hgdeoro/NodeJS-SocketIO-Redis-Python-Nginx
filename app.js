@@ -20,7 +20,9 @@ var HTTP_PORT = process.env.PORT || 3000;
  */
 
 var server = _http.createServer();
-var io = _io.listen(server);
+var io = _io.listen(server, {
+  'flash policy port' : -1
+});
 
 //
 // Subscribe to the Redis to receive notifications, and re-send it to the client
@@ -166,6 +168,33 @@ io.of('/io/user/notifications').on(
       });
 
     });
+
+//
+// Configuration for production
+// For further reading, see https://github.com/LearnBoost/Socket.IO/wiki/Configuring-Socket.IO
+//
+
+io.configure('production', function() {
+  console.log("Loading settings for PRODUCTION...");
+  io.enable('browser client minification'); // send minified client
+  io.enable('browser client etag'); // apply etag caching logic based on version
+  // number
+  io.enable('browser client gzip'); // gzip the file
+  io.set('log level', 1); // reduce logging
+
+  // io.set('transports', [ 'websocket', 'flashsocket', 'htmlfile',
+  // 'xhr-polling',
+  // 'jsonp-polling' ]);
+});
+
+//
+//Configuration for development
+//
+
+io.configure('development', function() {
+  console.log("Loading settings for DEVELOPMENT. "
+      + "Set 'NODE_ENV=production' to load for PRODUCTION");
+});
 
 server.listen(HTTP_PORT, function() {
   console.log('Node.JS server listening on port ' + HTTP_PORT);
