@@ -46,6 +46,11 @@ There are 4 servers:
   * used to share the `uuidCookie` between Python and Node.JS
   * used to implement publisher/subscriber... Any message published to Redis will be sent to the user using Socket.IO
 
+There is a fifth optional server:
+
+* uWSGI
+  * serves the Django application, for production environments
+  * start it with the script `uwsgi.sh`
 
 ## How to install and use
 
