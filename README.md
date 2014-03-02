@@ -11,7 +11,7 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 
 * the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from **Redis** to **Socket.IO**. The **Node.JS** server receives the cookies from the browser, and retrieves the *userId* from **Django**. The *userId* is used to generate the **Redis** channel name (for example: '/app/user/*USER_ID*/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using **Socket.IO**.
 
-* the **browser** has the cookies to track the logged in user, and are sent to **Python/Django** and **Node.JS** too. Those cookies are used by Node.JS, to trick Django and get the userId of the currently logged in user. Since the browsers communicates with *Nginx*, all this happens in the same domain, allowing to share the cookies between *Django* and *Node.JS*.
+* the **browser** has the cookies to track the logged in user, and are sent to **Python/Django** and **Node.JS** too. Those cookies are used by **Node.JS**, to trick **Django** and get the userId of the currently logged in user. Since the browsers communicates with **Nginx**, all this happens in the same domain, allowing to share the cookies between **Django** and **Node.JS**.
 
 * **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by **Socket.IO**.
 
@@ -20,13 +20,13 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 
 ### Overview: fallback mechanism, using uuidCookies
 
-* the **Python/Django** application is a simple web application. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), knows the *userId* (the `request.user.id` in Django). To share the *userId* with Node.JS, a random UUID is generated (called `uuidCookie`), and is stored in Redis for 5 seconds.
+* the **Python/Django** application is a simple web application. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), knows the *userId* (the `request.user.id` in Django). To share the *userId* with **Node.JS**, a random UUID is generated (called `uuidCookie`), and is stored in **Redis** for 5 seconds.
 
-* the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from Redis to Socket.IO. Node.JS receives the `uuidCookie` from the browser, and retrieves the *userId* from Redis. The *userId* is used to generate the Redis channel name (for example: '/app/user/*USER_ID*/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using Socket.IO.
+* the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from **Redis** to **Socket.IO**. The **Node.JS** server receives the `uuidCookie` from the browser, and retrieves the *userId* from **Redis**. The *userId* is used to generate the **Redis** channel name (for example: '/app/user/*USER_ID*/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using **Socket.IO**.
 
-* the **browser** uses Ajax to retrieve the `uuidCookie` from the web application (Python), and send this `uuidCookie` to **Node.JS** to start receiving notifications for the logged in user. Since the browsers and Ajax calls communicates with *Nginx*, all this happens in the same domain, avoiding a lot of problems (Same Origin Policy and related restrictions).
+* the **browser** uses Ajax to retrieve the `uuidCookie` from the **Python/Django** web application, and send this `uuidCookie` to **Node.JS** to start receiving notifications for the logged in user. Since the browsers and Ajax calls communicates with **Nginx**, all this happens in the same domain, avoiding a lot of problems (Same Origin Policy and related restrictions).
 
-* **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
+* **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by **Socket.IO**.
 
 ## Servers
 
