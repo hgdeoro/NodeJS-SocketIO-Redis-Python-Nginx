@@ -101,11 +101,17 @@ If you want the Python server returning the same user id (for example, 12345), y
 In this case, opening multiple tabs and publishing a message to the Redis channel named **/app/user/12345/notifications**
 will send the message to all the browsers / tabs.
 
+## uWSGI
 
+To use uWSGI to serve the Django application, start uWSGI with the provided shell script:
+
+    $ ./uwsgi.sh
+
+and access the site using [http://localhost:3334/](http://localhost:3334/)
 
 ## Used ports
 
-* Nginx: 3333
+* Nginx: 3333 and 3334
 * Node.JS: 3000
 * Python/Django: 3010
 
