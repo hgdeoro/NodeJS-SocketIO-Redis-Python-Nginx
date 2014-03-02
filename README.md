@@ -1,21 +1,19 @@
 # NodeJS-SocketIO-Redis-Python-Nginx
 
-**DISCLAIMER: this branch will contain a Django application. This is not finished yet, and this branch may be rebased**
-
-Simple *Node.JS* + *Socket.IO* application integrated to *Python/Django* using *Redis* and published to the web using *Nginx*.
+Simple **Node.JS** + **Socket.IO** application integrated to **Python/Django** using **Redis** and published to the web using **Nginx**.
 Python/Django isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
 
 This **IS NOT** a *public chat* nor *message broadcast* example. Each user get it's own notifications.
 
 ### Overview
 
-* the **Python/Django** application is a simple web application. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), knows the *userId* (the `request.user.id` in Django). Node.JS makes a request to this server to get the current logged in user, using the same cookies received from the browser.
+* the **Python/Django** application is a simple web application. There's where the business logic should exists. This is the applications that knows who is the current logged in users (the `request.user` in Django), knows the *userId* (the `request.user.id` in Django). **Node.JS** makes a request to this server to get the current logged in user, using the same cookies received from the browser.
 
-* the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from Redis to Socket.IO. Node.JS receives the cookies from the browser, and retrieves the *userId* from Django. The *userId* is used to generate the Redis channel name (for example: '/app/user/*USER_ID*/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using Socket.IO.
+* the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from **Redis** to **Socket.IO**. The **Node.JS** server receives the cookies from the browser, and retrieves the *userId* from **Django**. The *userId* is used to generate the **Redis** channel name (for example: '/app/user/*USER_ID*/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using **Socket.IO**.
 
 * the **browser** has the cookies to track the logged in user, and are sent to **Python/Django** and **Node.JS** too. Those cookies are used by Node.JS, to trick Django and get the userId of the currently logged in user. Since the browsers communicates with *Nginx*, all this happens in the same domain, allowing to share the cookies between *Django* and *Node.JS*.
 
-* **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
+* **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by **Socket.IO**.
 
 ![Overview](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/NodeJS-SocketIO-Redis-Python-Nginx.png)
 
@@ -26,7 +24,7 @@ This **IS NOT** a *public chat* nor *message broadcast* example. Each user get i
 
 * the **Node.JS** has no business logic, it's a generic application that retransmits the messages received from Redis to Socket.IO. Node.JS receives the `uuidCookie` from the browser, and retrieves the *userId* from Redis. The *userId* is used to generate the Redis channel name (for example: '/app/user/*USER_ID*/notifications'). A subscription to that channes is done, and each received message is re-sent to the browser using Socket.IO.
 
-* the **browser** uses Ajax to retrieve the `uuidCookie` from the web application (Python), and send this `uuidCookie` to *Node.JS* to start receiving notifications for the logged in user. Since the browsers and Ajax calls communicates with *Nginx*, all this happens in the same domain, avoiding a lot of problems (Same Origin Policy and related restrictions).
+* the **browser** uses Ajax to retrieve the `uuidCookie` from the web application (Python), and send this `uuidCookie` to **Node.JS** to start receiving notifications for the logged in user. Since the browsers and Ajax calls communicates with *Nginx*, all this happens in the same domain, avoiding a lot of problems (Same Origin Policy and related restrictions).
 
 * **Nginx** is used to expose this applications in a single URL namespace, including the WebSocket connections used by *Socket.IO*.
 
@@ -45,7 +43,7 @@ There are 4 servers:
   * Subscribe to a Redis channel and send received messages to the browser using Socket.IO
   * See [app.js](app.js)
 * Redis
-  * used to share the `uuidiCooki` between Python and Node.JS
+  * used to share the `uuidCookie` between Python and Node.JS
   * used to implement publisher/subscriber... Any message published to Redis will be sent to the user using Socket.IO
 
 
@@ -59,8 +57,8 @@ Clone this repo and install Node.JS and Python libraries
     $ virtualenv --no-site-packages virtualenv
     $ . virtualenv/bin/activate
     $ pip install -r requirements.txt
-    $ python manage.py syncdb (will create the DB and a new user)
-    $ python manage.py createsuperuser (OPTIONAL - to create aditional users, to test per-user notifications)
+    $ python manage.py syncdb # will create the DB and a new user
+    $ python manage.py createsuperuser # OPTIONAL - to create aditional users, to test per-user notifications
 
 Setup Nginx and start it
 
@@ -77,7 +75,7 @@ Start the Node.JS app
 
 Start Python/Django server
 
-    $ python manage.py runserver 3010 
+    $ python manage.py runserver 3010
 
 Go to: [http://localhost:3333/](http://localhost:3333/), login with the created user, and clic the link "**Notifications**", and send messages to yourself.
 
@@ -107,7 +105,7 @@ to some of the users' channels (use the channel name from the log message above)
 
 If you want the Python server returning the same user id (for example, 12345), you must start the server with:
 
-    $ env SAMPLE_USERID=12345 python server.py
+    $ `env SAMPLE_USERID=12345 python server.py`
 
 In this case, opening multiple tabs and publishing a message to the Redis channel named **/app/user/12345/notifications**
 will send the message to all the browsers / tabs.
@@ -116,7 +114,7 @@ will send the message to all the browsers / tabs.
 
 To use uWSGI to serve the Django application, start uWSGI with the provided shell script:
 
-    $ ./uwsgi.sh
+    $ `./uwsgi.sh`
 
 and access the site using Nginx, but on port 3334: [http://localhost:3334/](http://localhost:3334/)
 
