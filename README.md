@@ -119,9 +119,19 @@ and access the site using [http://localhost:3334/](http://localhost:3334/)
 
 See them at GitHub issues.
 
-## Sequence diagram
+## Sequence diagram - uuidCookie
+
+Here is how uuidCookie is used to get the logged in user from Node.JS
 
 ![Sequence diagram](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/sequence-diagram.png)
+
+
+## Sequence diagram - standard browser cookies
+
+Here is how the standard browser cookies are used to get the logged in user from Node.JS
+
+![Sequence diagram](https://raw.github.com/data-tsunami/NodeJS-SocketIO-Redis-Python-Nginx/master/sequence-diagram-browser-cookies.png)
+
 
 ### Tools
 
