@@ -110,7 +110,7 @@ to some of the users' channels (use the channel name from the log message above)
 
 If you want the Python server returning the same user id (for example, 12345), you must start the server with:
 
-    $ `env SAMPLE_USERID=12345 python server.py`
+    $ env SAMPLE_USERID=12345 python server.py
 
 In this case, opening multiple tabs and publishing a message to the Redis channel named **/app/user/12345/notifications**
 will send the message to all the browsers / tabs.
@@ -119,7 +119,7 @@ will send the message to all the browsers / tabs.
 
 To use uWSGI to serve the Django application, start uWSGI with the provided shell script:
 
-    $ `./uwsgi.sh`
+    $ ./uwsgi.sh
 
 and access the site using Nginx, but on port 3334: [http://localhost:3334/](http://localhost:3334/)
 
