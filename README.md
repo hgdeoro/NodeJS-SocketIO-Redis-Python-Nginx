@@ -68,7 +68,7 @@ Start Python/Django server
 
     $ python manage.py runserver 3010 
 
-Go to: [http://localhost:3333/](http://localhost:3333/), and clic the link "**Notifications**", and send messages to yourself.
+Go to: [http://localhost:3333/](http://localhost:3333/), login with the created user, and clic the link "**Notifications**", and send messages to yourself.
 
 #### How to send messages from CLI or use multiple browsers or browser tabs
 
