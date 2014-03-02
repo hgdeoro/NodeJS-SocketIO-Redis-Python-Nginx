@@ -33,44 +33,15 @@
 
 <script type="text/javascript">
   //
-  // Retrieves the uuidCookie using Ajax and subscribe to notifications
+  // Constants
   //
-  var subscribeByUuidCookie = function(socket) {
-    addLog('Socket.IO connected');
-    console.log('Socket.IO connected');
 
-    $.ajax({
-      type : "GET",
-      url : "/python/uuidCookie/",
-    }).done(
-        function(msg) {
-          if (msg.ok === true) {
-            console.log("UUID-Cookie received from server using AJAX: "
-                + msg.uuidCookie);
-
-            // 2. Use that UUID to subscribe to events
-            console.log('uuidCookie: ' + msg.uuidCookie);
-            addLog('Trying to subscribe to notifications');
-            socket.emit('subscribe-to-notifications', {
-              uuid : msg.uuidCookie
-            });
-
-          } else {
-            addLog('ERROR: couldn\'t subscribe to notifications');
-            console.log("Error: the server didn't "
-                + "provide a valid UUID-Cookie");
-          }
-        });
-
-  };
+  var postUrl = '/python/postMessage/';
+  var uuidCookieUrl = '/python/uuidCookie/';
 
   //
-  // Subscribe to notifications user cookies
+  // Utility functions
   //
-  var subscribyByUserCookie = function(socket) {
-    socket.emit('subscribe-to-notifications-by-cookies');
-  };
-
   var addLog = function(msg) {
     var newMsg = $('<div/>');
     newMsg.addClass("alert alert-info");
@@ -85,9 +56,50 @@
     newMsg.appendTo('#messages');
   }
 
-  $(document).ready(function() {
+  //
+  // Subscribe to notifications user cookies
+  //
+  var subscribeByBrowserCookie = function(socket) {
+    socket.emit('subscribe-to-notifications-by-cookies');
+  };
 
-    var postUrl = '/python/postMessage/';
+  //
+  // Retrieves the uuidCookie using Ajax and subscribe to notifications
+  //
+  var subscribeByUuidCookie = function(socket) {
+    addLog('Socket.IO connected');
+    console.log('Socket.IO connected');
+
+    var callback = function(msg) {
+      if (msg.ok === true) {
+        console.log("UUID-Cookie received from server using AJAX: "
+            + msg.uuidCookie);
+
+        console.log('uuidCookie: ' + msg.uuidCookie);
+        addLog('Trying to subscribe to notifications');
+        socket.emit('subscribe-to-notifications', {
+          uuid : msg.uuidCookie
+        });
+
+      } else {
+        addLog('ERROR: couldn\'t subscribe to notifications');
+        console.log("Error: the server didn't provide a valid UUID-Cookie");
+      }
+    };
+
+    $.ajax({
+      type : "GET",
+      url : uuidCookieUrl,
+    }).done(function(msg) {
+      callback(msg);
+    });
+
+  };
+
+  //
+  // onload()
+  //
+  $(document).ready(function() {
 
     $("#form").submit(function(event) {
       event.preventDefault();
@@ -126,7 +138,7 @@
     });
 
     socket.on('connect', function() {
-      subscribyByUserCookie(socket);
+      subscribeByBrowserCookie(socket);
     });
 
   });
