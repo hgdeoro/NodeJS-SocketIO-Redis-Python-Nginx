@@ -7,37 +7,19 @@
  * Module dependencies.
  */
 
-var _express = require('express');
 var _http = require('http');
-var _path = require('path');
 var _io = require('socket.io');
 var _redis = require('redis');
 
-/*
- * Setup Express
- */
-
-var app = _express();
-
 // all environments
 var UUIDCOOKIE_PREFIX = process.env.UUIDCOOKIE_PREFIX || 'cookie-';
-app.set('port', process.env.PORT || 3000);
-app.use(_express.favicon());
-app.use(_express.logger('dev'));
-app.use(_express.json());
-app.use(_express.urlencoded());
-app.use(_express.methodOverride());
-
-// development only
-if ('development' === app.get('env')) {
-  app.use(_express.errorHandler());
-}
+var HTTP_PORT = process.env.PORT || 3000;
 
 /*
  * Setup HTTP server and Socket.IO
  */
 
-var server = _http.createServer(app);
+var server = _http.createServer();
 var io = _io.listen(server);
 
 //
@@ -184,6 +166,6 @@ io.of('/io/user/notifications').on(
 
     });
 
-server.listen(app.get('port'), function() {
-  console.log('Express server listening on port ' + app.get('port'));
+server.listen(HTTP_PORT, function() {
+  console.log('Node.JS server listening on port ' + HTTP_PORT);
 });

@@ -9,8 +9,5 @@
     "socket.io": "*",
     "hiredis": "*",
     "redis": "*",
-    "express": "3.4.8",
-    "jade": "*",
-    "ejs": "*"
   }
 }
