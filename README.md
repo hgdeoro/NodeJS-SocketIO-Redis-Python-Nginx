@@ -3,7 +3,7 @@
 Simple **Node.JS** + **Socket.IO** application integrated to **Python/Django** using **Redis** and published to the web using **Nginx**.
 Python/Django isn't really required... any language that can publish to Redis will be able to send asynchronous notifications to users.
 
-This **IS NOT** a *public chat* nor *message broadcast* example. Each user get it's own notifications.
+This isn't a *public chat* nor *message broadcast* example. Instead, each user get it's own notifications.
 
 ### Overview
 
