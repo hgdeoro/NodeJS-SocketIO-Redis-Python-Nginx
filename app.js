@@ -15,7 +15,8 @@ var _request = require('request');
 // all environments
 var UUIDCOOKIE_PREFIX = process.env.UUIDCOOKIE_PREFIX || 'cookie-';
 var HTTP_PORT = process.env.PORT || 3000;
-var SUBSCRIBE_BY_COOKIES_URL = process.env.SUBSCRIBE_BY_COOKIES_URL || '';
+var SUBSCRIBE_BY_COOKIES_URL = process.env.SUBSCRIBE_BY_COOKIES_URL
+    || 'http://localhost:3333/python/currentUserId/';
 
 /*
  * Setup HTTP server and Socket.IO
@@ -283,6 +284,10 @@ io.configure('development', function() {
   console.log("Loading settings for DEVELOPMENT. "
       + "Set 'NODE_ENV=production' to load for PRODUCTION");
 });
+
+//
+// Start HTTP server
+//
 
 server.listen(HTTP_PORT, function() {
   console.log('Node.JS server listening on port ' + HTTP_PORT);
