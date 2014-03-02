@@ -67,7 +67,8 @@ function subscribeUserToNotifications(socket, redisClient, redisKey, redis_err,
   console.log("Removing retrieved key from Redis");
   redisClient.del(redisKey);
 
-  var userId = redis_reply;
+  var redisReplyObj = JSON.parse(redis_reply);
+  var userId = redisReplyObj.userId;
 
   //
   // Hanlde Redis errors

@@ -8,6 +8,7 @@ import redis
 import logging
 
 from django.conf import settings
+import json
 
 redis_server = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB)
 
@@ -30,10 +31,14 @@ def store_uuid_cookie(user_id):
     Returns: None if cookie couldn't be stored
     """
     uuid_cookie = str(uuid.uuid4())
-    logger.info("store_uuid_cookie() - uuid_cookie: '%s' - user_id: '%s'", uuid_cookie, user_id)
+
+    data = json.dumps({
+                       'userId': user_id
+                       })
+    logger.info("store_uuid_cookie() - uuid_cookie: '%s' - data: '%s'", uuid_cookie, data)
 
     set_result = redis_server.set(settings.UUIDCOOKIE_PREFIX + uuid_cookie,
-                                  user_id,
+                                  data,
                                   settings.UUIDCOOKIE_EXPIRE_TIME,
                                   nx=True)
 
